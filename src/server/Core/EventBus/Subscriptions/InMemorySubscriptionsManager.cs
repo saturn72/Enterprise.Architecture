@@ -146,20 +146,6 @@ namespace EventBus.Subscriptions
         public string GetEventKey(Type eventType)
         {
             return eventType.Name;
-            var name = "";
-            BuildNameFromGenericType(eventType);
-            return name;
-
-            void BuildNameFromGenericType(Type type)
-            {
-                name += type.Name;
-
-                if (!type.GenericTypeArguments.Any())
-                    return;
-                var idx = name.LastIndexOf('`');
-                name = name.Substring(0, idx) + "_";
-                BuildNameFromGenericType(type.GenericTypeArguments.First());
-            }
         }
     }
 }

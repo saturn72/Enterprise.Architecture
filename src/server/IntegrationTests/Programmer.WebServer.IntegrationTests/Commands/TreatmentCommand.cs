@@ -42,8 +42,6 @@ namespace Programmer.WebServer.IntegrationTests.Commands
             res.EnsureSuccessStatusCode();
             res.IsSuccessStatusCode.ShouldBeTrue();
             res.StatusCode.ShouldBe(HttpStatusCode.Created);
-
-            throw new System.NotImplementedException("Listen to q and get object from there");
         }
     }
 }

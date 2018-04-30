@@ -11,9 +11,11 @@ namespace EventBus.Tests.Subscriptions
         [Fact]
         public void SubscriptionManagerExtensions_GetEventKey()
         {
+            var tName = "dadada";
             var sm = new Mock<ISubscriptionsManager>();
+            sm.Setup(s=>s.GetEventKey(It.IsAny<Type>())).Returns(tName);
             var key = SubscriptionsManagerExtensions.GetEventKey<string>(sm.Object);
-            key.ShouldBe("string");
+            key.ShouldBe(tName);
             sm.Verify(s => s.GetEventKey(It.Is<Type>(t => t == typeof(string))), Times.Once);
         }
 

@@ -13,6 +13,5 @@ namespace Microsoft.AspNetCore.Builder
 
             eventBus.Subscribe<TEvent, TEventHandler>();
         }
-            
     }
 }

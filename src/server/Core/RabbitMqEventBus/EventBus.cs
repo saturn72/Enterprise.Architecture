@@ -128,7 +128,7 @@ namespace RabbitMqEventBus
             var channel = _persistentConnection.CreateModel();
 
             channel.ExchangeDeclare(exchange: _config.BrokerName,
-                type: "direct");
+                type: _config.ExchangeType);
 
             channel.QueueDeclare(queue: _config.QueueName,
                 durable: true,
