@@ -1,0 +1,41 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12 ">
+      <div class="card">
+        <div class="card-header">
+
+          <div class="row align-items-center">
+            <div class="col">
+              <i class="fa fa-align-justify"></i> System Treatments
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-block btn-ghost-primary" (click)="treatmentCreate()"><i class="fa fa-plus" aria-hidden="true"></i> Create New</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Treatment Id</th>
+                <th>Values</th>
+                <th>Commands</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let treat of treatments">
+                <td scope="row">{{treat.id}}</td>
+                <td>VTBI: {{treat.values.vtbi}} Dose: {{treat.values.dose}} Rate: {{treat.values.rate}}</td>
+                <td>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-link" (click)="treatmentRead(treat.id)">More..</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

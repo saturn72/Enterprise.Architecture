@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  programmer.webserver:
+    image: programmerwebserver
+    build:
+      context: .
+      dockerfile: Programmer.WebServer/Dockerfile
+    depends_on:
+      - rabbitmq
+
+  pnpservicefake:
+    image: pnpservicefake
+    build:
+      context: .
+      dockerfile: Components/PnpServiceFake/Dockerfile
+    depends_on:
+      - programmer.webserver
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3.7.3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"

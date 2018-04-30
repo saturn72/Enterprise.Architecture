@@ -1,0 +1,127 @@
+{
+  "calculator": [
+    {
+      "vtbi": "1",
+      "rate": "2",
+      "dose": "3",
+      "id": 1
+    },
+    {
+      "vtbi": "2",
+      "rate": "3",
+      "dose": "4",
+      "id": 2
+    },
+    {
+      "vtbi": "4",
+      "rate": "5",
+      "dose": "6",
+      "id": 3
+    },
+    {
+      "vtbi": "7",
+      "rate": "8",
+      "dose": "9",
+      "id": 4
+    },
+    {
+      "vtbi": "8",
+      "rate": "9",
+      "dose": "10",
+      "id": 5
+    },
+    {
+      "vtbi": "9",
+      "rate": "10",
+      "dose": "130",
+      "id": 6
+    },
+    {
+      "vtbi": "6",
+      "rate": "7",
+      "dose": "8",
+      "id": 7
+    },
+    {
+      "vtbi": "3",
+      "rate": "4",
+      "dose": "5",
+      "id": 8
+    }
+  ],
+  "treatment": [
+    {
+      "values": {
+        "vtbi": "2",
+        "rate": "1",
+        "dose": "3"
+      },
+      "status": 20,
+      "id": 1
+    },
+    {
+      "values": {
+        "vtbi": "355",
+        "rate": "55",
+        "dose": "455"
+      },
+      "status": 20,
+      "id": 2
+    },
+    {
+      "values": {
+        "vtbi": "123",
+        "rate": "123",
+        "dose": "123"
+      },
+      "status": 20,
+      "id": 3
+    },
+    {
+      "values": {
+        "vtbi": "1435",
+        "rate": "9999",
+        "dose": "9999"
+      },
+      "status": 20,
+      "id": 4
+    },
+    {
+      "values": {
+        "vtbi": "7",
+        "rate": "6",
+        "dose": "8"
+      },
+      "status": 20,
+      "id": 5
+    },
+    {
+      "values": {
+        "vtbi": "91",
+        "rate": "90",
+        "dose": "92"
+      },
+      "status": 20,
+      "id": 6
+    },
+    {
+      "values": {
+        "vtbi": "2",
+        "rate": "1",
+        "dose": "3"
+      },
+      "status": 20,
+      "id": 7
+    },
+    {
+      "values": {
+        "vtbi": "2",
+        "rate": "3",
+        "dose": "4",
+        "id": 2
+      },
+      "status": 20,
+      "id": 8
+    }
+  ]
+}

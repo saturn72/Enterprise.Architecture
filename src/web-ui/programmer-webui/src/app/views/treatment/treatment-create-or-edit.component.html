@@ -1,0 +1,57 @@
+<div class="animated fadeIn">
+  <div *ngIf="treatment.id; then editTreatment else createTreatment"></div>
+  <ng-template #editTreatment>
+    <h2>Edit Treatment
+      <span class="badge badge-pill badge-info">{{treatment.id}}</span>
+    </h2>
+  </ng-template>
+  <ng-template #createTreatment>Create New Treatment</ng-template>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <strong>Treatment Values</strong>
+        </div>
+        <div class="card-body">
+          <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="text-input">VTBI</label>
+              <div class="col-md-9">
+                {{ranges.vtbiRanges}}
+                <input type="text" (focusout)="fillTreatmentValues('vtbi')" [(ngModel)]="treatment.values.vtbi" name="text-input-vtbi" class="form-control"
+                  placeholder="Insert VTBI value here">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="text-input">Rate</label>
+              <div class="col-md-9">
+                {{ranges.rateRanges}}
+                <input type="text" (focusout)="fillTreatmentValues('rate')" [(ngModel)]="treatment.values.rate" name="text-input-rate" class="form-control"
+                  placeholder="Insert Rate value here">
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="text-input">Dose</label>
+              <div class="col-md-9">
+                {{ranges.doseRanges}}
+                <input type="text" (focusout)="fillTreatmentValues('dose')" [(ngModel)]="treatment.values.dose" name="text-input-dose" class="form-control"
+                  placeholder="Insert Dose value here">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-sm btn-primary" (click)="submitTreatment()" [disabled]="!isValidForm()">
+            <i class="fa fa-thumbs-o-up"></i> Submit</button>
+          <button type="reset" class="btn btn-sm btn-warning" (click)="resetForm()">
+            <i class="fa fa-refresh"></i> Reset</button>
+          <i [hidden]="!isCalculating" class="fa fa-circle-o-notch fa-lg mt-4 fa-spin"></i>
+        </div>
+      </div>
+    </div>
+  </div>

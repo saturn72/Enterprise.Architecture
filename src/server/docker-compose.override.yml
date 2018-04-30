@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  programmer.webserver:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
+  pnpservicefake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
