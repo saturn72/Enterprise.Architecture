@@ -34,7 +34,7 @@ namespace Programmer.Common.Services.Pump
             if (!pumpId.HasValue() || pumpId.Contains(" "))
             {
                 srvResponse.Result = ServiceResponseResult.BadOrMissingData;
-                srvResponse.ErrorMessage = "pump id in wrong format";
+                srvResponse.Message = "pump id in wrong format";
                 return srvResponse;
             }
             return await Task.Run(() =>

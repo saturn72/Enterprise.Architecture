@@ -4,31 +4,27 @@
     {
         public static void PublishEntityCreatedEvent<TData>(this IEventBus eventBus, TData data)
         {
-            BuildAndPublishEvent(eventBus, data, CrudAction.Created);
+            BuildAndPublishEvent(eventBus, data, IntegrationEventAction.Created);
         }
 
         public static void PublishEntityReadEvent<TData>(this IEventBus eventBus, TData data)
         {
-            BuildAndPublishEvent(eventBus, data, CrudAction.Read);
+            BuildAndPublishEvent(eventBus, data, IntegrationEventAction.Read);
         }
 
         public static void PublishEntityUpdatedEvent<TData>(this IEventBus eventBus, TData data)
         {
-            BuildAndPublishEvent(eventBus, data, CrudAction.Updated);
+            BuildAndPublishEvent(eventBus, data, IntegrationEventAction.Updated);
         }
 
         public static void PublishEntityDeletedEvent<TData>(this IEventBus eventBus, TData data)
         {
-            BuildAndPublishEvent(eventBus, data, CrudAction.Delete);
+            BuildAndPublishEvent(eventBus, data, IntegrationEventAction.Delete);
         }
 
-        private static void BuildAndPublishEvent<TData>(this IEventBus eventBus, TData data, CrudAction crudAction)
+        private static void BuildAndPublishEvent<TData>(this IEventBus eventBus, TData data, IntegrationEventAction integrationEventAction)
         {
-            var @event = new CrudIntegrationEvent<TData>
-            {
-                Entity = data,
-                CrudAction = crudAction
-            };
+            var @event = new IntegrationEvent<TData>(data, integrationEventAction);
             eventBus.Publish(@event);
         }
     }

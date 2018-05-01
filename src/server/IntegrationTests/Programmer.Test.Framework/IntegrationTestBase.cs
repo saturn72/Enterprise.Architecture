@@ -18,9 +18,9 @@ namespace Programmer.Test.Framework
         protected static readonly Uri BaseUri = new Uri("http://localhost:5001/");
         private IModel _channel;
         private IConnection _connection;
-        protected readonly HttpClient Client;
+        protected readonly HttpClient HttpClient;
+        protected readonly WebSocketClient WebSocketClient;
         protected readonly IConfigurationProvider Configuration;
-
 
         protected IntegrationTestBase()
         {
@@ -43,10 +43,12 @@ namespace Programmer.Test.Framework
             Configuration = configurationRoot.Providers.FirstOrDefault();
 
             var server = new TestServer(builder);
-            Client = server.CreateClient();
-            Client.BaseAddress = BaseUri;
+            HttpClient = server.CreateClient();
+            HttpClient.BaseAddress = BaseUri;
 
+            WebSocketClient = server.CreateWebSocketClient();
 
+            QEventListener.Flush();
             SetupRabbitMq();
         }
 
@@ -76,18 +78,7 @@ namespace Programmer.Test.Framework
 
             var consumer = new EventingBasicConsumer(_channel);
 
-            var dirName = "integration-test-output";
-            if (!Directory.Exists(dirName))
-                Directory.CreateDirectory(dirName);
-
-            var fileName = dirName+ "/output_{0}.log";
-            
-            var index = 0;
-            consumer.Received += (model, ea) => {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-                File.WriteAllLines(string.Format(fileName, index++), new[] { message });
-            };
+            consumer.Received += (model, ea) => QEventListener.Handle(ea.Body);
             _channel.BasicConsume(queueName,
                 true,
                 consumer);
@@ -97,7 +88,7 @@ namespace Programmer.Test.Framework
         {
             _channel.Close();
             _connection.Close();
-            Client?.Dispose();
+            HttpClient?.Dispose();
         }
     }
 }

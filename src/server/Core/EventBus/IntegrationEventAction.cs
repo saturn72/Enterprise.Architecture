@@ -1,10 +1,11 @@
 ﻿namespace EventBus
 {
-    public enum CrudAction
+    public enum IntegrationEventAction
     {
         Created,
         Read,
         Updated,
         Delete,
+        Processed
     }
 }

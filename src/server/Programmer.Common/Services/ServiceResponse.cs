@@ -14,7 +14,7 @@ namespace Programmer.Common.Services
         #region Properties
 
         public ServiceResponseResult Result { get; set; }
-        public string ErrorMessage { get; set; }
+        public string Message { get; set; }
         public TServiceDataModel Data { get; set; }
 
         #endregion

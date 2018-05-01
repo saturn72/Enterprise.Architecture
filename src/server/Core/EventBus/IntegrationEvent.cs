@@ -20,4 +20,16 @@ namespace EventBus
 
         #endregion
     }
+
+    public class IntegrationEvent<TEntity> : IntegrationEvent
+    {
+        public IntegrationEvent(TEntity entity, IntegrationEventAction integrationEventAction)
+        {
+            Entity = entity;
+            IntegrationEventAction = integrationEventAction;
+        }
+        public TEntity Entity { get; }
+
+        public IntegrationEventAction IntegrationEventAction { get; }
+    }
 }

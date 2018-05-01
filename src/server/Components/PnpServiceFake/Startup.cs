@@ -21,8 +21,7 @@ namespace PnpServiceFake
         {
             services.AddMvc();
 
-            services.RegisterRabbitMq(Configuration, new []{typeof(CrudIntegrationEvent<CommandRequest>)});
-
+            services.RegisterRabbitMq(Configuration, new []{typeof(IntegrationEvent<CommandRequest>)});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,8 +32,7 @@ namespace PnpServiceFake
                 app.UseDeveloperExceptionPage();
             }
 
-            app.SubscribeToIntegrationEvent<CrudIntegrationEvent<CommandRequest>, CrudIntegrationEventHandler>();
-
+            app.SubscribeToIntegrationEvent<IntegrationEvent<CommandRequest>, IntegrationEventHandler>();
             app.UseMvc();
         }
     }

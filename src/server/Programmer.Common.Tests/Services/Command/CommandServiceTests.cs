@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Programmer.Common.Services.Command;
 using System.Threading.Tasks;
@@ -76,9 +75,9 @@ namespace Programmer.Common.Tests.Services.Command
             var eventBus = new Mock<IEventBus>();
             var cmdSrv = new CommandService(sessionManager.Object, cmdVer.Object, eventBus.Object);
             var res = await cmdSrv.SendCommand(cmdReq);
-            res.Result.ShouldBe(ServiceResponseResult.Created);
+            res.Result.ShouldBe(ServiceResponseResult.Accepted);
 
-            eventBus.Verify(eb => eb.Publish(It.Is<CrudIntegrationEvent<CommandRequest>>(e=>e.CrudAction == CrudAction.Created)), Times.Once);
+            eventBus.Verify(eb => eb.Publish(It.Is<IntegrationEvent<CommandRequest>>(e=>e.IntegrationEventAction == IntegrationEventAction.Created)), Times.Once);
         }
     }
 }

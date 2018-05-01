@@ -1,10 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Net.WebSockets;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using CacheManager;
+using EventBus;
 using MemoryCacheManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Programmer.Common.Fakes.Command;
@@ -12,6 +18,7 @@ using Programmer.Common.Fakes.Session;
 using Programmer.Common.Services.Command;
 using Programmer.Common.Services.Pump;
 using Programmer.Common.Services.Session;
+using Programmer.WebServer.Integration;
 using Swashbuckle.AspNetCore.Swagger;
 using Programmer.WebServer.Swagger;
 
@@ -48,7 +55,7 @@ namespace Programmer.WebServer
                     // Set the comments path for the Swagger JSON and UI.
                     var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                    if(File.Exists(xmlPath))
+                    if (File.Exists(xmlPath))
                         c.IncludeXmlComments(xmlPath);
                     c.OperationFilter<AddRequiredHeaderParameters>();
                 });
@@ -89,7 +96,10 @@ namespace Programmer.WebServer
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Programmer API Tester");
             });
+
+            app.SubscribeToIntegrationEvent<IntegrationEvent<CommandResponse>, IntegrationEventHandler>();
             app.UseMvc();
         }
+
     }
 }

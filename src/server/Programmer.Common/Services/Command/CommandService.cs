@@ -37,7 +37,7 @@ namespace Programmer.Common.Services.Command
 
             _eventBus.PublishEntityCreatedEvent(request);
 
-            srvRes.Result = ServiceResponseResult.Created;
+            srvRes.Result = ServiceResponseResult.Accepted;
             return srvRes;
         }
 
@@ -46,7 +46,7 @@ namespace Programmer.Common.Services.Command
 
             var message = "";
             var isValid = _commandVerifier.IsValidCommand(cmdRequest.Name, cmdRequest.Parameters, ref message);
-            string.Concat(srvRes.ErrorMessage, message);
+            string.Concat(srvRes.Message, message);
 
             if (!isValid)
                 srvRes.Result = ServiceResponseResult.BadOrMissingData;
@@ -60,14 +60,14 @@ namespace Programmer.Common.Services.Command
             if (sessionData == null)
             {
                 serviceResponse.Result = ServiceResponseResult.NotFound;
-                serviceResponse.ErrorMessage = "Failed to find session with token =  " + sessionToken;
+                serviceResponse.Message = "Failed to find session with token =  " + sessionToken;
                 return false;
             }
 
             if (!await _sessionManager.IsResourceConnected(sessionData.ResourceId))
             {
                 serviceResponse.Result = ServiceResponseResult.NotAcceptable;
-                serviceResponse.ErrorMessage = string.Format("Lost connection with the pump (serial #{0})", sessionData.ResourceId);
+                serviceResponse.Message = string.Format("Lost connection with the pump (serial #{0})", sessionData.ResourceId);
                 return false;
             }
             return true;

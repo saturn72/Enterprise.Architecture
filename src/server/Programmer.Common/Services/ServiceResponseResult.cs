@@ -8,6 +8,7 @@ namespace Programmer.Common.Services
         NotSet,
         Created,
         Updated,
-        NotAcceptable
+        NotAcceptable,
+        Accepted
     }
 }

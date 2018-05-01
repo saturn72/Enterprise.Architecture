@@ -26,14 +26,14 @@ namespace Programmer.WebServer.Tests
         }
 
         [Theory]
-        [InlineData(null, ServiceResponseResult.NotSet, HttpStatusCode.InternalServerError)]
-        [InlineData(null, ServiceResponseResult.NotAcceptable, HttpStatusCode.NotAcceptable)]
-        [InlineData("some-error-message", ServiceResponseResult.Success, HttpStatusCode.PartialContent)]
-        public void ServiceResponseExtensions_ToActionResult_ReturnsErrorBy_AssertByHttpStatusCode(string errMsg, ServiceResponseResult serviceResponseResult, HttpStatusCode expStatusCode)
+        [InlineData("some-message", ServiceResponseResult.NotSet, HttpStatusCode.InternalServerError)]
+        [InlineData("some-message", ServiceResponseResult.NotAcceptable, HttpStatusCode.NotAcceptable)]
+        [InlineData("some-message", ServiceResponseResult.Accepted, HttpStatusCode.Accepted)]
+        public void ServiceResponseExtensions_ToActionResult_ReturnsErrorBy_AssertByHttpStatusCode(string message, ServiceResponseResult serviceResponseResult, HttpStatusCode expStatusCode)
         {
             var serRes = new ServiceResponse<string>
             {
-                ErrorMessage = errMsg,
+                Message = message,
                 Result = serviceResponseResult
             };
 

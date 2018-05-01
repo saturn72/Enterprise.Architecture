@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
             };
 
             var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/command/treatment", treatment);
-            var res = await Client.SendAsync(req);
+            var res = await HttpClient.SendAsync(req);
             res.IsSuccessStatusCode.ShouldBeFalse();
             res.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
@@ -38,10 +39,11 @@ namespace Programmer.WebServer.IntegrationTests.Commands
             var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/command/treatment", treatment);
             req.Headers.Add("X-Session-Token", "some-session-id");
 
-            var res = await Client.SendAsync(req);
+            var res = await HttpClient.SendAsync(req);
             res.EnsureSuccessStatusCode();
             res.IsSuccessStatusCode.ShouldBeTrue();
-            res.StatusCode.ShouldBe(HttpStatusCode.Created);
+            res.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            QEventListener.QEvents.Any().ShouldBeTrue();
         }
     }
 }

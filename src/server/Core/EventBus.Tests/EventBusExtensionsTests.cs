@@ -14,7 +14,7 @@ namespace EventBus.Tests
             var eb = new Mock<IEventBus>();
             EventBusExtensions.PublishEntityCreatedEvent(eb.Object, entity);
 
-            eb.Verify(ev => ev.Publish(It.Is<CrudIntegrationEvent<string>>(e => e.CrudAction == CrudAction.Created && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
+            eb.Verify(ev => ev.Publish(It.Is<IntegrationEvent<string>>(e => e.IntegrationEventAction == IntegrationEventAction.Created && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace EventBus.Tests
             var eb = new Mock<IEventBus>();
             EventBusExtensions.PublishEntityReadEvent(eb.Object, entity);
 
-            eb.Verify(ev => ev.Publish(It.Is<CrudIntegrationEvent<string>>(e => e.CrudAction == CrudAction.Read && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
+            eb.Verify(ev => ev.Publish(It.Is<IntegrationEvent<string>>(e => e.IntegrationEventAction == IntegrationEventAction.Read && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace EventBus.Tests
             var eb = new Mock<IEventBus>();
             EventBusExtensions.PublishEntityUpdatedEvent(eb.Object, entity);
 
-            eb.Verify(ev => ev.Publish(It.Is<CrudIntegrationEvent<string>>(e => e.CrudAction == CrudAction.Updated && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
+            eb.Verify(ev => ev.Publish(It.Is<IntegrationEvent<string>>(e => e.IntegrationEventAction == IntegrationEventAction.Updated && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace EventBus.Tests
             var eb = new Mock<IEventBus>();
             EventBusExtensions.PublishEntityDeletedEvent(eb.Object, entity);
 
-            eb.Verify(ev => ev.Publish(It.Is<CrudIntegrationEvent<string>>(e => e.CrudAction == CrudAction.Delete && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
+            eb.Verify(ev => ev.Publish(It.Is<IntegrationEvent<string>>(e => e.IntegrationEventAction == IntegrationEventAction.Delete && e.Entity == entity && e.CreatedOnUtc <= DateTime.UtcNow && e.Id != default(Guid))), Times.Once);
         }
     }
 }

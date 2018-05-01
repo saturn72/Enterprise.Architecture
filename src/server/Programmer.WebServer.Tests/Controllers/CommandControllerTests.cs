@@ -51,7 +51,7 @@ namespace Programmer.WebServer.Tests.Controllers
             var tm = new TreatmentModel();
             var srvRes = new ServiceResponse<CommandResponse>
             {
-                ErrorMessage = "some-err",
+                Message = "some-err",
                 Result = ServiceResponseResult.NotAcceptable
             };
 
