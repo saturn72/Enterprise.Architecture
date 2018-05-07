@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Programmer.Test.Framework;
+using Programmer.Test.Framework.Q;
 using Shouldly;
 using Xunit;
 
@@ -10,6 +11,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
 {
     public class TreatmentCommand : IntegrationTestBase
     {
+        [Trait("Category","integration_tests")]
         [Fact]
         public async Task SetTreatment_MissingXSessionToken()
         {
@@ -26,6 +28,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
             res.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 
+        [Trait("Category","integration_tests")]
         [Fact]
         public async Task SetTreatment_AddToQ()
         {
@@ -43,7 +46,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
             res.EnsureSuccessStatusCode();
             res.IsSuccessStatusCode.ShouldBeTrue();
             res.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-            QEventListener.QEvents.Any().ShouldBeTrue();
+            EventQueueManager.IncomingEvents.Any().ShouldBeTrue();
         }
     }
 }

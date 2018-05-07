@@ -21,7 +21,7 @@ namespace PnpServiceFake
         {
             services.AddMvc();
 
-            services.RegisterRabbitMq(Configuration, new []{typeof(IntegrationEvent<CommandRequest>)});
+            services.RegisterRabbitMqPublisher(Configuration, new []{typeof(IntegrationEvent<CommandRequest>)});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

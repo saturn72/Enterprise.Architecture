@@ -35,7 +35,6 @@ namespace RabbitMqEventBus
             _subscriptionsManager.OnEventRemoved += SubsManager_OnEventRemoved;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config;
-            _consumerChannel = CreateConsumerChannel();
         }
 
         #endregion
@@ -53,7 +52,7 @@ namespace RabbitMqEventBus
             {
                 var eventName = _subscriptionsManager.GetEventKey(@event.GetType());
 
-                channel.ExchangeDeclare(_config.BrokerName, _config.ExchangeType);
+                channel.ExchangeDeclare(_config.ExhangeName, _config.ExchangeType);
                 var message = JsonSerializer.SerializeToString(@event);
                 var body = Encoding.UTF8.GetBytes(message);
 
@@ -62,7 +61,7 @@ namespace RabbitMqEventBus
                     var properties = channel.CreateBasicProperties();
                     properties.DeliveryMode = 2; // persistent
 
-                    channel.BasicPublish(exchange: _config.BrokerName,
+                    channel.BasicPublish(exchange: _config.ExhangeName,
                                      routingKey: eventName,
                                      mandatory: true,
                                      basicProperties: properties,
@@ -109,8 +108,8 @@ namespace RabbitMqEventBus
 
             using (var channel = _persistentConnection.CreateModel())
             {
-                channel.QueueUnbind(queue: _config.QueueName,
-                    exchange: _config.BrokerName,
+                channel.QueueUnbind(queue: _config.IncomingQueueName,
+                    exchange: _config.ExhangeName,
                     routingKey: eventName);
 
                 if (_subscriptionsManager.IsEmpty)
@@ -120,17 +119,12 @@ namespace RabbitMqEventBus
 
         private IModel CreateConsumerChannel()
         {
-            if (!_persistentConnection.IsConnected)
-            {
-                _persistentConnection.TryConnect();
-            }
-
             var channel = _persistentConnection.CreateModel();
 
-            channel.ExchangeDeclare(exchange: _config.BrokerName,
+            channel.ExchangeDeclare(exchange: _config.ExhangeName,
                 type: _config.ExchangeType);
 
-            channel.QueueDeclare(queue: _config.QueueName,
+            channel.QueueDeclare(queue: _config.OutgoingQueueName,
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
@@ -148,7 +142,7 @@ namespace RabbitMqEventBus
                 channel.BasicAck(ea.DeliveryTag, multiple: false);
             };
 
-            channel.BasicConsume(queue: _config.QueueName,
+            channel.BasicConsume(queue: _config.OutgoingQueueName,
                 autoAck: false,
                 consumer: consumer);
 
@@ -191,7 +185,7 @@ namespace RabbitMqEventBus
             }
         }
 
-            private void TryConnectIfDisconnected()
+        private void TryConnectIfDisconnected()
         {
             if (!_persistentConnection.IsConnected)
                 _persistentConnection.TryConnect();
@@ -203,11 +197,23 @@ namespace RabbitMqEventBus
             if (containsKey)
                 return;
             TryConnectIfDisconnected();
+            DeclareExchangeAndBindQueue(eventName);
+        }
 
+        private void DeclareExchangeAndBindQueue(string eventName)
+        {
             using (var channel = _persistentConnection.CreateModel())
             {
-                channel.QueueBind(queue: _config.QueueName,
-                    exchange: _config.BrokerName,
+                channel.ExchangeDeclare(_config.ExhangeName, _config.ExchangeType);
+
+                channel.QueueDeclare(queue: _config.IncomingQueueName,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
+
+                channel.QueueBind(queue: _config.IncomingQueueName,
+                    exchange: _config.ExhangeName,
                     routingKey: eventName);
             }
         }

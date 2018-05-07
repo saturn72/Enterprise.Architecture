@@ -13,7 +13,8 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static void RegisterRabbitMq(this IServiceCollection services, IConfiguration configuration, IEnumerable<Type> integrationEventHandlersTypes)
+        public static void RegisterRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration,
+            IEnumerable<Type> integrationEventHandlersTypes)
         {
             ConfigureQueue(services, configuration);
             if (integrationEventHandlersTypes.IsNullOrEmpty())
@@ -29,9 +30,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 rmc.Host = configuration["RabbitMqHost"];
                 rmc.Username = configuration["RabbitMqUsername"];
                 rmc.Password = configuration["RabbitMqPassword"];
-                rmc.BrokerName = configuration["BrokerName"];
+                rmc.ExhangeName = configuration["ExhangeName"];
                 rmc.ExchangeType = configuration["ExchangeType"];
-                rmc.QueueName = configuration["QueueName"];
+                rmc.OutgoingQueueName = configuration["outgoingQueueName"];
+                rmc.IncomingQueueName = configuration["incomingQueueName"];
 
                 var retryCount = 20;
                 if (configuration["EventBusRetryCount"].HasValue())
@@ -58,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     || !factory.Password.HasValue())
                     throw new ArgumentException("Cannot initiate RabbitMQ. Missing IP, Username or password");
 
-                return new DefaultRabbitMQPersistentConnection(factory, logger, rmqConfig);
+                return new DefaultRabbitMQPersistentConnection(factory, logger, rmqConfig.MaxRetries);
             });
         }
     }

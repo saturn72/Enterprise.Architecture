@@ -12,7 +12,7 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Programmer.WebServer\Programmer.WebServer.csproj" />
     <ProjectReference Include="..\Programmer.Common\Programmer.Common.csproj" />
+    <ProjectReference Include="..\Programmer.WebServer\Programmer.WebServer.csproj" />
   </ItemGroup>
 </Project>

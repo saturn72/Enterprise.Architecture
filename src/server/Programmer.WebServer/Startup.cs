@@ -1,16 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Net.WebSockets;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using CacheManager;
 using EventBus;
 using MemoryCacheManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Programmer.Common.Fakes.Command;
@@ -66,7 +61,7 @@ namespace Programmer.WebServer
         private void RegisterDependencies(IServiceCollection services)
         {
             services.AddSingleton<ICacheManager, InMemoryCacheManager>();
-            services.RegisterRabbitMq(Configuration, null);
+            services.RegisterRabbitMqPublisher(Configuration, null);
             RegisterInternalServices(services);
             var restBaseUri = new Uri("http://localhost:3004");
             services.AddScoped<IPumpInfoRepository>(s => new HttpPumpInfoRepository(restBaseUri));

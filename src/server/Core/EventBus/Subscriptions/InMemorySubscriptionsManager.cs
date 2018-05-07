@@ -138,14 +138,14 @@ namespace EventBus.Subscriptions
 
         }
 
-        
+
         public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
 
         public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
 
         public string GetEventKey(Type eventType)
         {
-            return eventType.Name;
+            return eventType.ToCSharpName();
         }
     }
 }

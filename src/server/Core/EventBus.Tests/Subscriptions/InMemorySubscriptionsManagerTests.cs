@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventBus.Subscriptions;
@@ -9,11 +10,13 @@ namespace EventBus.Tests.Subscriptions
 {
     public class InMemorySubscriptionsManagerTests
     {
-        [Fact]
-        public void InMemorySubscriptionsManager_GetEventKey()
+        [Theory]
+        [InlineData(typeof(TestIntegrationEvent1), "TestIntegrationEvent1")]
+        [InlineData(typeof(IEnumerable<IList<string>>), "IEnumerable<IList<String>>")]
+        public void InMemorySubscriptionsManager_GetEventKey(Type eventType, string expectedKey)
         {
             var sm = new InMemorySubscriptionsManager();
-            sm.GetEventKey<TestIntegrationEvent1>().ShouldBe(typeof(TestIntegrationEvent1).Name);
+            sm.GetEventKey(eventType).ShouldBe(expectedKey);
         }
 
         [Fact]
