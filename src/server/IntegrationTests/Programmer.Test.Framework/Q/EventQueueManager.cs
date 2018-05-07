@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using EventBus;
 using Microsoft.Extensions.Configuration;
+using Programmer.Common.Services.Command;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using ServiceStack.Text;
@@ -39,8 +41,11 @@ namespace Programmer.Test.Framework.Q
                 exclusive: false,
                 autoDelete: false,
                 arguments: null);
-            _channel.QueueBind(_rabbitMqConfig.OutgoingQueueName, _rabbitMqConfig.ExchangeName, "IntegrationEvent`1");
-            
+            _channel.QueueBind(
+                queue: _rabbitMqConfig.OutgoingQueueName, 
+                exchange: _rabbitMqConfig.ExchangeName, 
+                routingKey: typeof(IntegrationEvent<CommandRequest>).ToCSharpName());
+
             var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += (model, ea) => Handle(ea.Body);
@@ -83,14 +88,18 @@ namespace Programmer.Test.Framework.Q
         public void Publish<TEvent>(TEvent @event)
         {
             var message = JsonSerializer.SerializeToString(@event);
-            var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(exchange:  _rabbitMqConfig.ExchangeName,
-                routingKey: @event.ToCSharpName(),
+            Publish(message, @event.ToCSharpName());
+        }
+
+        public void Publish(string message, string routingKey)
+        {
+            var body = Encoding.UTF8.GetBytes(message);
+            _channel.BasicPublish(exchange: _rabbitMqConfig.ExchangeName,
+                routingKey: routingKey,
                 basicProperties: null,
                 body: body);
         }
-
 
         public void Dispose()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.WebSockets;
 using System.Reflection;
 using CacheManager;
 using EventBus;
@@ -61,7 +62,10 @@ namespace Programmer.WebServer
         private void RegisterDependencies(IServiceCollection services)
         {
             services.AddSingleton<ICacheManager, InMemoryCacheManager>();
-            services.RegisterRabbitMqPublisher(Configuration, null);
+            services.RegisterRabbitMqPublisher(Configuration);
+            //TODO:  generic way to register EventHandlers
+            services.AddTransient<IIntegrationEventHandler<IntegrationEvent<CommandResponse>>, IntegrationEventHandler>();
+
             RegisterInternalServices(services);
             var restBaseUri = new Uri("http://localhost:3004");
             services.AddScoped<IPumpInfoRepository>(s => new HttpPumpInfoRepository(restBaseUri));
@@ -92,9 +96,44 @@ namespace Programmer.WebServer
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Programmer API Tester");
             });
 
-            app.SubscribeToIntegrationEvent<IntegrationEvent<CommandResponse>, IntegrationEventHandler>();
+           
+            SetupWebSocket(app);
+
+
+            var eventBus = app.ApplicationServices.GetService<IEventBus>();
+            eventBus.Subscribe<IntegrationEvent<CommandResponse>, IntegrationEventHandler>();
             app.UseMvc();
         }
 
+        private void SetupWebSocket(IApplicationBuilder app)
+        {
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            };
+            app.UseWebSockets(webSocketOptions);
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/ws")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await WebSocketOutlet.Send(webSocket);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 400;
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+
+            });
+        }
     }
 }

@@ -2,6 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.WebSockets;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +14,15 @@ using Programmer.WebServer;
 
 namespace Programmer.Test.Framework
 {
-    public abstract class IntegrationTestBase:IDisposable
+    public abstract class IntegrationTestBase : IDisposable
     {
         protected static readonly Uri BaseUri = new Uri("http://localhost:5001/");
 
         protected readonly HttpClient HttpClient;
-        protected readonly WebSocketClient WebSocketClient;
+        protected readonly WebSocket WebSocket;
         protected readonly IConfigurationProvider Configuration;
         protected readonly EventQueueManager EventQueueManager;
+        protected readonly byte[] Buffer = new byte[1024];
 
         protected IntegrationTestBase()
         {
@@ -44,7 +48,9 @@ namespace Programmer.Test.Framework
             HttpClient = server.CreateClient();
             HttpClient.BaseAddress = BaseUri;
 
-            WebSocketClient = server.CreateWebSocketClient();
+            WebSocket = server.CreateWebSocketClient().ConnectAsync(new Uri(BaseUri, "ws"), CancellationToken.None).Result;
+
+            Task.Run(()=> WebSocket.ReceiveAsync(Buffer, CancellationToken.None));
 
             EventQueueManager = new EventQueueManager();
             EventQueueManager.Flush();

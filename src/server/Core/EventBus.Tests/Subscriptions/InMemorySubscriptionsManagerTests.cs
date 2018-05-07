@@ -129,13 +129,15 @@ namespace EventBus.Tests.Subscriptions
             sm.AddSubscription<TestIntegrationEvent1, TestIntegrationEventHandler1>();
             var handlers0 = sm.GetHandlersForEvent(eventName);
             handlers0.Count().ShouldBe(1);
-            handlers0.ShouldContain(x => x.HandlerType == typeof(TestIntegrationEventHandler1));
+            handlers0.ShouldContain(x => x.HandlerServiceType == typeof(IIntegrationEventHandler<TestIntegrationEvent1>));
+            handlers0.ShouldContain(x => x.HandlerImplType == typeof(TestIntegrationEventHandler1));
 
             sm.AddSubscription<TestIntegrationEvent1, TestIntegrationEventHandler2>();
             var handlers1 = sm.GetHandlersForEvent(eventName);
             handlers1.Count().ShouldBe(2);
-            handlers1.ShouldContain(x => x.HandlerType == typeof(TestIntegrationEventHandler1));
-            handlers1.ShouldContain(x => x.HandlerType == typeof(TestIntegrationEventHandler2));
+            handlers0.ShouldContain(x => x.HandlerServiceType == typeof(IIntegrationEventHandler<TestIntegrationEvent1>));
+            handlers1.ShouldContain(x => x.HandlerImplType == typeof(TestIntegrationEventHandler1));
+            handlers1.ShouldContain(x => x.HandlerImplType == typeof(TestIntegrationEventHandler2));
         }
     }
 

@@ -4,17 +4,17 @@ using System.Linq;
 
 namespace EventBus.Subscriptions
 {
-    public class InMemorySubscriptionsManager : ISubscriptionsManager
+    public class InMemorySubscriptionsManager : ISubscriptionsManager, IInMemorySubscriptionsManager
     {
         private readonly IDictionary<string, ICollection<SubscriptionInfo>> _handlers;
-        private readonly ICollection<Type> _eventTypes;
+        private readonly IDictionary<string, Type> _eventTypes;
 
         public event EventHandler<string> OnEventRemoved;
 
         public InMemorySubscriptionsManager()
         {
             _handlers = new Dictionary<string, ICollection<SubscriptionInfo>>();
-            _eventTypes = new List<Type>();
+            _eventTypes = new Dictionary<string, Type>();
         }
 
         public bool IsEmpty => !_handlers.Keys.Any();
@@ -23,7 +23,7 @@ namespace EventBus.Subscriptions
         public void AddDynamicSubscription<TDynamicIntegrationEventHandler>(string eventName)
             where TDynamicIntegrationEventHandler : IDynamicIntegrationEventHandler
         {
-            DoAddSubscription(typeof(TDynamicIntegrationEventHandler), eventName, isDynamic: true);
+            DoAddSubscription(typeof(IDynamicIntegrationEventHandler), typeof(TDynamicIntegrationEventHandler), eventName, isDynamic: true);
         }
 
         public void AddSubscription<TIntegrationEvent, TIntegrationEventHandler>()
@@ -31,30 +31,31 @@ namespace EventBus.Subscriptions
             where TIntegrationEventHandler : IIntegrationEventHandler<TIntegrationEvent>
         {
             var eventName = this.GetEventKey<TIntegrationEvent>();
-            DoAddSubscription(typeof(TIntegrationEventHandler), eventName, isDynamic: false);
-            _eventTypes.Add(typeof(TIntegrationEvent));
+            DoAddSubscription(typeof(IIntegrationEventHandler<TIntegrationEvent>), typeof(TIntegrationEventHandler), eventName, isDynamic: false);
+            var iet = typeof(TIntegrationEvent);
+            _eventTypes[iet.ToCSharpName()] = iet;
         }
 
-        private void DoAddSubscription(Type handlerType, string eventName, bool isDynamic)
+        private void DoAddSubscription(Type handlerServiceType, Type handlerImplType, string key, bool isDynamic)
         {
-            if (!HasSubscriptionsForEvent(eventName))
+            if (!HasSubscriptionsForEvent(key))
             {
-                _handlers.Add(eventName, new List<SubscriptionInfo>());
+                _handlers.Add(key, new List<SubscriptionInfo>());
             }
 
-            if (_handlers[eventName].Any(s => s.HandlerType == handlerType))
+            if (_handlers[key].Any(s => s.HandlerImplType == handlerImplType))
             {
                 throw new ArgumentException(
-                    $"Handler Type {handlerType.Name} already registered for '{eventName}'", nameof(handlerType));
+                    $"Handler Type {handlerImplType.Name} already registered for '{key}'", nameof(handlerImplType));
             }
 
             if (isDynamic)
             {
-                _handlers[eventName].Add(SubscriptionInfo.Dynamic(handlerType));
+                _handlers[key].Add(SubscriptionInfo.AsDynamic(handlerServiceType, handlerImplType));
             }
             else
             {
-                _handlers[eventName].Add(SubscriptionInfo.Typed(handlerType));
+                _handlers[key].Add(SubscriptionInfo.AsTyped(handlerServiceType, handlerImplType));
             }
         }
 
@@ -85,14 +86,10 @@ namespace EventBus.Subscriptions
                 if (!_handlers[eventName].Any())
                 {
                     _handlers.Remove(eventName);
-                    var eventType = _eventTypes.SingleOrDefault(e => e.Name == eventName);
-                    if (eventType != null)
-                    {
-                        _eventTypes.Remove(eventType);
-                    }
+                    if (_eventTypes.ContainsKey(eventName))
+                        _eventTypes.Remove(eventName);
                     RaiseOnEventRemoved(eventName);
                 }
-
             }
         }
 
@@ -134,14 +131,19 @@ namespace EventBus.Subscriptions
                 return null;
             }
 
-            return _handlers[eventName].SingleOrDefault(s => s.HandlerType == handlerType);
+            return _handlers[eventName]
+                .SingleOrDefault(s => s.HandlerServiceType == handlerType || s.HandlerImplType == handlerType);
 
         }
 
 
         public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
 
-        public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
+        public Type GetEventTypeByName(string eventName)
+        {
+            _eventTypes.TryGetValue(eventName, out var eventType);
+            return eventType;
+        }
 
         public string GetEventKey(Type eventType)
         {

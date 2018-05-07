@@ -5,21 +5,23 @@ namespace EventBus.Subscriptions
     public class SubscriptionInfo
     {
         public bool IsDynamic { get; }
-        public Type HandlerType { get; }
+        public Type HandlerServiceType { get; }
+        public Type HandlerImplType { get; }
 
-        private SubscriptionInfo(bool isDynamic, Type handlerType)
+        private SubscriptionInfo(bool isDynamic, Type handlerServiceType, Type handlerImplType)
         {
             IsDynamic = isDynamic;
-            HandlerType = handlerType;
+            HandlerServiceType = handlerServiceType;
+            HandlerImplType = handlerImplType;
         }
 
-        public static SubscriptionInfo Dynamic(Type handlerType)
+        public static SubscriptionInfo AsDynamic(Type handlerServiceType, Type handlerImplType)
         {
-            return new SubscriptionInfo(true, handlerType);
+            return new SubscriptionInfo(true, handlerServiceType, handlerImplType);
         }
-        public static SubscriptionInfo Typed(Type handlerType)
+        public static SubscriptionInfo AsTyped(Type handlerServiceType, Type handlerImplType)
         {
-            return new SubscriptionInfo(false, handlerType);
+            return new SubscriptionInfo(false, handlerServiceType, handlerImplType);
         }
     }
 }

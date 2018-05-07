@@ -43,7 +43,6 @@ namespace Programmer.Common.Services.Command
 
         private bool ValidateCommandData(CommandRequest cmdRequest, ServiceResponse<CommandResponse> srvRes)
         {
-
             var message = "";
             var isValid = _commandVerifier.IsValidCommand(cmdRequest.Name, cmdRequest.Parameters, ref message);
             string.Concat(srvRes.Message, message);

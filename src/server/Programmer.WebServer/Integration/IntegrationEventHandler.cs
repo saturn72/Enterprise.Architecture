@@ -8,7 +8,7 @@ namespace Programmer.WebServer.Integration
     {
         public async Task Handle(IntegrationEvent<CommandResponse> @event)
         {
-            throw new System.NotImplementedException("stream using SignalR");
+          await Task.Run(()=> WebSocketOutlet.AddToBuffer("just recieved event: " + @event.ToString()));
         }
     }
 }

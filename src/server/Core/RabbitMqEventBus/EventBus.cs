@@ -22,19 +22,22 @@ namespace RabbitMqEventBus
         private readonly ISubscriptionsManager _subscriptionsManager;
         private readonly ILogger<EventBus> _logger;
         private readonly RabbitMqConfig _config;
+        private readonly IServiceProvider _serviceProvider;
         private IModel _consumerChannel;
 
         #endregion
 
         #region ctor
 
-        public EventBus(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBus> logger, ISubscriptionsManager subscriptionsManager, RabbitMqConfig config)
+        public EventBus(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBus> logger,
+            ISubscriptionsManager subscriptionsManager, RabbitMqConfig config, IServiceProvider serviceProvider)
         {
             _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
             _subscriptionsManager = subscriptionsManager ?? throw new ArgumentNullException(nameof(subscriptionsManager));
             _subscriptionsManager.OnEventRemoved += SubsManager_OnEventRemoved;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config;
+            _serviceProvider = serviceProvider;
         }
 
         #endregion
@@ -121,16 +124,6 @@ namespace RabbitMqEventBus
         {
             var channel = _persistentConnection.CreateModel();
 
-            channel.ExchangeDeclare(exchange: _config.ExhangeName,
-                type: _config.ExchangeType);
-
-            channel.QueueDeclare(queue: _config.OutgoingQueueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-
-
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += async (model, ea) =>
             {
@@ -157,29 +150,27 @@ namespace RabbitMqEventBus
 
         private async Task ProcessEvent(string eventName, string message)
         {
-            //TODO: add IoC resolver here
-
-            //throw new System.NotImplementedException("Resolve type usign dependecy injection container");
             if (_subscriptionsManager.HasSubscriptionsForEvent(eventName))
             {
                 var subscriptionInfos = _subscriptionsManager.GetHandlersForEvent(eventName);
                 foreach (var subInfo in subscriptionInfos)
                 {
+                    var handler = _serviceProvider.GetService(subInfo.HandlerServiceType);
+
                     if (subInfo.IsDynamic)
                     {
-                        var handler = Activator.CreateInstance(subInfo.HandlerType) as IDynamicIntegrationEventHandler;
                         dynamic eventData = JsonObject.Parse(message);
-                        await handler.Handle(eventData);
+
+                        await ( handler  as IDynamicIntegrationEventHandler).Handle(eventData);
                     }
                     else
                     {
                         var eventType = _subscriptionsManager.GetEventTypeByName(eventName);
                         var integrationEvent = JsonSerializer.DeserializeFromString(message, eventType);
-                        //var handler = scope.ResolveOptional(subInfo.HandlerType);
-                        var handler = Activator.CreateInstance(subInfo.HandlerType) as IIntegrationEventHandler;
+                        var intHandler =  handler as IIntegrationEventHandler;
 
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new[] { integrationEvent });
+                        await (Task)concreteType.GetMethod("Handle").Invoke(intHandler, new[] { integrationEvent });
                     }
                 }
             }
@@ -198,6 +189,8 @@ namespace RabbitMqEventBus
                 return;
             TryConnectIfDisconnected();
             DeclareExchangeAndBindQueue(eventName);
+
+            _consumerChannel = CreateConsumerChannel();
         }
 
         private void DeclareExchangeAndBindQueue(string eventName)

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using EventBus;
 using EventBus.Subscriptions;
 using Microsoft.Extensions.Configuration;
@@ -13,17 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static void RegisterRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration,
-            IEnumerable<Type> integrationEventHandlersTypes)
-        {
-            ConfigureQueue(services, configuration);
-            if (integrationEventHandlersTypes.IsNullOrEmpty())
-                return;
-            foreach (var handlerType in integrationEventHandlersTypes)
-                services.AddTransient(handlerType);
-        }
-
-        private static void ConfigureQueue(IServiceCollection services, IConfiguration configuration)
+        public static void RegisterRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<RabbitMqConfig>(rmc =>
             {
@@ -41,7 +31,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 rmc.MaxRetries = retryCount;
             });
 
-            services.AddSingleton<IEventBus, RabbitMqEventBus.EventBus>();
+            services.AddSingleton<IEventBus>(sp =>new RabbitMqEventBus.EventBus(sp.GetService<IRabbitMQPersistentConnection>(),
+                    sp.GetService<ILogger<RabbitMqEventBus.EventBus>>(),
+                    sp.GetService<ISubscriptionsManager>(),
+                    sp.GetService<RabbitMqConfig>(),
+                    sp));
+
             services.AddSingleton<ISubscriptionsManager, InMemorySubscriptionsManager>();
             services.AddSingleton(sp => sp.GetService<IOptions<RabbitMqConfig>>().Value);
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
