@@ -21,7 +21,7 @@ namespace Programmer.WebServer.IntegrationTests.Notifications
             var @event = new IntegrationEvent<CommandResponse>(cmdRes, IntegrationEventAction.Created);
 
             EventQueueManager.Publish(@event);
-            Thread.Sleep(150);
+            Thread.Sleep(250);
 
             Buffer.Any(x => x != 0).ShouldBeTrue();
         }

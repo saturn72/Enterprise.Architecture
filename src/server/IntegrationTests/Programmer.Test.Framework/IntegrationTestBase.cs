@@ -17,8 +17,6 @@ namespace Programmer.Test.Framework
 {
     public abstract class IntegrationTestBase : IDisposable
     {
-        protected static readonly Uri BaseUri = new Uri("http://localhost:5001/");
-
         protected readonly HttpClient HttpClient;
         protected readonly WebSocket WebSocket;
         protected readonly IConfigurationProvider Configuration;
@@ -42,17 +40,17 @@ namespace Programmer.Test.Framework
             var builder = new WebHostBuilder()
                 .UseContentRoot(serverDirectory)
                 .UseStartup<Startup>()
-                .UseUrls(BaseUri.AbsoluteUri)
+               // .UseUrls(BaseUri.AbsoluteUri)
                 .UseConfiguration(configurationRoot);
 
             Configuration = configurationRoot.Providers.FirstOrDefault();
 
             var server = new TestServer(builder);
             HttpClient = server.CreateClient();
-            HttpClient.BaseAddress = BaseUri;
+            HttpClient.BaseAddress = server.BaseAddress;;
 
             var wsc = server.CreateWebSocketClient();
-            WebSocket = wsc.ConnectAsync(new Uri(BaseUri, "ws"), CancellationToken.None).Result;
+            WebSocket = wsc.ConnectAsync(new Uri(server.BaseAddress, "ws"), CancellationToken.None).Result;
             _buffer = WebSocket.CreateClientBuffer(1024, 1024);
 
             Task.Run(()=> WebSocket.ReceiveAsync(_buffer, CancellationToken.None));
@@ -64,6 +62,7 @@ namespace Programmer.Test.Framework
 
         public void Dispose()
         {
+            WebSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "ok", CancellationToken.None).Wait();
             EventQueueManager?.Dispose();
             HttpClient?.Dispose();
         }
