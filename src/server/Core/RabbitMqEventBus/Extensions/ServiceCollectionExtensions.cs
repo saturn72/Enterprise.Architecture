@@ -17,17 +17,17 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.Configure<RabbitMqConfig>(rmc =>
             {
-                rmc.Host = configuration["RabbitMqHost"];
-                rmc.Username = configuration["RabbitMqUsername"];
-                rmc.Password = configuration["RabbitMqPassword"];
-                rmc.ExhangeName = configuration["ExhangeName"];
-                rmc.ExchangeType = configuration["ExchangeType"];
+                rmc.Host = configuration["rabbitMqHost"];
+                rmc.Username = configuration["rabbitMqUsername"];
+                rmc.Password = configuration["rabbitMqPassword"];
+                rmc.ExhangeName = configuration["exhangeName"];
+                rmc.ExchangeType = configuration["exchangeType"];
                 rmc.OutgoingQueueName = configuration["outgoingQueueName"];
                 rmc.IncomingQueueName = configuration["incomingQueueName"];
 
                 var retryCount = 20;
-                if (configuration["EventBusRetryCount"].HasValue())
-                    int.TryParse(configuration["EventBusRetryCount"], out retryCount);
+                if (configuration["eventBusRetryCount"].HasValue())
+                    int.TryParse(configuration["eventBusRetryCount"], out retryCount);
                 rmc.MaxRetries = retryCount;
             });
 

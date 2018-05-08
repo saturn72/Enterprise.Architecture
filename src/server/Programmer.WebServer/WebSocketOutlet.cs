@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -8,22 +10,29 @@ namespace Programmer.WebServer
 {
     public class WebSocketOutlet
     {
-        static byte[] _buffer = new byte[1024 * 4];
+        private static readonly List<byte> Buffer = new List<byte>();
+
         public static async Task Send(WebSocket webSocket)
         {
-            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(_buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
+            while (!webSocket.CloseStatus.HasValue)
             {
-                await webSocket.SendAsync(new ArraySegment<byte>(_buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(_buffer), CancellationToken.None);
+                if (!Buffer.Any())
+                {
+                    Thread.Sleep(150);
+                    continue;
+                }
+                await webSocket.SendAsync(
+                    new ArraySegment<byte>(Buffer.ToArray(), 0, Math.Min(Buffer.Count, 4*1024)), 
+                    WebSocketMessageType.Text,
+                    true,
+                    CancellationToken.None);
+                Buffer.Clear();
             }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
 
         public static void AddToBuffer(string data)
         {
-            _buffer = Encoding.UTF8.GetBytes(data);
+            Buffer.AddRange(Encoding.UTF8.GetBytes(data));
         }
     }
 }

@@ -33,7 +33,12 @@ namespace Programmer.Test.Framework.Q
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
-            //register to programmer's outgoing exchange
+            ListenToAutOutgoingExchange();
+            ConnectToTestIncomingExchange();
+        }
+
+        private void ListenToAutOutgoingExchange()
+        {
             _channel.ExchangeDeclare(_rabbitMqConfig.ExchangeName, _rabbitMqConfig.ExchangeType);
             _channel.QueueDeclare(
                 queue: _rabbitMqConfig.OutgoingQueueName,
@@ -42,25 +47,28 @@ namespace Programmer.Test.Framework.Q
                 autoDelete: false,
                 arguments: null);
             _channel.QueueBind(
-                queue: _rabbitMqConfig.OutgoingQueueName, 
-                exchange: _rabbitMqConfig.ExchangeName, 
+                queue: _rabbitMqConfig.OutgoingQueueName,
+                exchange: _rabbitMqConfig.ExchangeName,
                 routingKey: typeof(IntegrationEvent<CommandRequest>).ToCSharpName());
+        }
 
+        private void ConnectToTestIncomingExchange()
+        {
             var consumer = new EventingBasicConsumer(_channel);
-
             consumer.Received += (model, ea) => Handle(ea.Body);
             _channel.BasicConsume(_rabbitMqConfig.IncomingQueueName, true, consumer);
         }
 
         private RabbitMqConfig GetRabbitMqConfig(IConfigurationProvider configuration)
         {
-            configuration.TryGet("RabbitMqHost", out var rabbitMqHostName);
-            configuration.TryGet("RabbitMqUsername", out var rabbitMqUsername);
-            configuration.TryGet("RabbitMqPassword", out var rabbitMqPassword);
-            configuration.TryGet("ExhangeName", out var exchangeName);
-            configuration.TryGet("ExchangeType", out var outgoingExchangeType);
-            configuration.TryGet("outgoingQueueName", out var outgoingQueueName);
-            configuration.TryGet("incomingQueueName", out var incomingQueueName);
+            configuration.TryGet("rabbitMqHost", out var rabbitMqHostName);
+            configuration.TryGet("rabbitMqUsername", out var rabbitMqUsername);
+            configuration.TryGet("rabbitMqPassword", out var rabbitMqPassword);
+            configuration.TryGet("exhangeName", out var exchangeName);
+            configuration.TryGet("exchangeType", out var outgoingExchangeType);
+            //This is not mistake. it is relative to programmer
+            configuration.TryGet("outgoingQueueName", out var programmerOutgoingQueueName);
+            configuration.TryGet("incomingQueueName", out var programmerIncomingQueueName);
 
             return new RabbitMqConfig
             {
@@ -69,8 +77,8 @@ namespace Programmer.Test.Framework.Q
                 Password = rabbitMqPassword,
                 ExchangeName = exchangeName,
                 ExchangeType = outgoingExchangeType,
-                OutgoingQueueName = outgoingQueueName,
-                IncomingQueueName = incomingQueueName
+                OutgoingQueueName = programmerOutgoingQueueName,
+                IncomingQueueName =  programmerIncomingQueueName,
             };
         }
 

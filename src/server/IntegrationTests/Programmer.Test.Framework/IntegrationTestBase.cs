@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,7 +23,9 @@ namespace Programmer.Test.Framework
         protected readonly WebSocket WebSocket;
         protected readonly IConfigurationProvider Configuration;
         protected readonly EventQueueManager EventQueueManager;
-        protected readonly byte[] Buffer = new byte[1024];
+        protected IEnumerable<byte> Buffer => _buffer.Array;
+
+        private readonly ArraySegment<byte> _buffer;
 
         protected IntegrationTestBase()
         {
@@ -48,9 +51,11 @@ namespace Programmer.Test.Framework
             HttpClient = server.CreateClient();
             HttpClient.BaseAddress = BaseUri;
 
-            WebSocket = server.CreateWebSocketClient().ConnectAsync(new Uri(BaseUri, "ws"), CancellationToken.None).Result;
+            var wsc = server.CreateWebSocketClient();
+            WebSocket = wsc.ConnectAsync(new Uri(BaseUri, "ws"), CancellationToken.None).Result;
+            _buffer = WebSocket.CreateClientBuffer(1024, 1024);
 
-            Task.Run(()=> WebSocket.ReceiveAsync(Buffer, CancellationToken.None));
+            Task.Run(()=> WebSocket.ReceiveAsync(_buffer, CancellationToken.None));
 
             EventQueueManager = new EventQueueManager();
             EventQueueManager.Flush();
