@@ -3,6 +3,8 @@ version: '3'
 services:
   programmer.webserver:
     image: programmerwebserver
+    ports:
+      - "81:80"
     build:
       context: .
       dockerfile: Programmer.WebServer/Dockerfile
@@ -11,12 +13,22 @@ services:
 
   pnpservicefake:
     image: pnpservicefake
+    ports:
+      - "82:80"
     build:
       context: .
       dockerfile: Components/PnpServiceFake/Dockerfile
     depends_on:
       - programmer.webserver
       - rabbitmq
+
+  calculator.webserver:
+    image: calculatorwebserver
+    build:
+      context: .
+      dockerfile: Functional/Calculator.WebServer/Dockerfile
+    ports:
+      - "83:80"
 
   rabbitmq:
     image: rabbitmq:3.7.3-management

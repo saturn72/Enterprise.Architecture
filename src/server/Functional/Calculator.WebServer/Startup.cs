@@ -1,46 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using EventBus;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using PnpServiceFake.Integration;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace PnpServiceFake
+namespace Calculator.WebServer
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Pnp Fake Service API Tester", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Calculator Web Server API Tester", Version = "v1" });
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
-            });
-
-            services.RegisterRabbitMqPublisher(Configuration);
-
-            //subscribe integration event handlers
-            services.AddTransient<IIntegrationEventHandler<IntegrationEvent<CommandRequest>>>(sp =>
-            {
-                var eb = sp.GetService<IEventBus>();
-                return new IntegrationEventHandler(eb);
             });
         }
 
@@ -58,9 +45,8 @@ namespace PnpServiceFake
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pnp Fake Service API Tester");
             });
 
-            var eventBus = app.ApplicationServices.GetService<IEventBus>();
-            eventBus.Subscribe<IntegrationEvent<CommandRequest>, IntegrationEventHandler>();
             app.UseMvc();
+
         }
     }
 }
