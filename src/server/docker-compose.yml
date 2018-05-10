@@ -30,16 +30,6 @@ services:
     ports:
       - "83:80"
 
-  programmerwebui:
-    image: programmer.webui
-    build:
-      context: .
-      dockerfile: ../web-ui/programmer-webui/Dockerfile
-    ports:
-      - "4200:80"
-    depends_on:
-      - programmer.webserver
-
   rabbitmq:
     image: rabbitmq:3.7.3-management
     ports:

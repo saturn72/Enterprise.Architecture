@@ -1,4 +1,7 @@
 <div class="animated fadeIn">
+    <div [hidden]="!hasNotification" [class]="notificationType">
+        <strong>{{notificationMessage}}</strong>        
+      </div>
   <div *ngIf="treatment.id; then editTreatment else createTreatment"></div>
   <ng-template #editTreatment>
     <h2>Edit Treatment

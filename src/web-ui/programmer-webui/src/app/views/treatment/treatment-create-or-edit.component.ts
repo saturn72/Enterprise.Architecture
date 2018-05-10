@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from "rxjs/Rx"
 
 import { getStyle, rgbToHex } from '@coreui/coreui/js/src/utilities/'
 import { TreatmentModel, TreatmentValuesModel } from './models/TreatmentModel';
@@ -12,6 +13,9 @@ import { CalculationService } from './services/CalculationService';
 })
 export class TreatmentCreateOrEditComponent implements OnInit {
 
+  notificationMessage: string;
+  notificationType: string;
+  hasNotification: boolean;
   id: string;
   treatment: TreatmentModel;
   ranges: {} = {
@@ -41,9 +45,14 @@ export class TreatmentCreateOrEditComponent implements OnInit {
       || (this.treatment.values.rate > 0 && this.treatment.values.dose > 0)) {
 
       this.isCalculating = true;
-      this.calculationService.getValues(key, this.treatment.values).
-        subscribe(values => {
+      this.calculationService.getValues(key, this.treatment.values)
+        .subscribe(values => {
           this.treatment.values = values[0];
+          this.isCalculating = false;
+        }, error => {
+          this.notificationMessage = "Failed to connect to caluclation service. Please retry later";
+          this.notificationType = "alert alert-danger";
+          this.hasNotification = true;
           this.isCalculating = false;
         });
     }
