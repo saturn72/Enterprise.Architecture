@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\HttpUtilites\HttpUtilites.csproj" />
+    <ProjectReference Include="..\HttpUtilites\HttpUtilites.csproj" />
   </ItemGroup>
 
 </Project>

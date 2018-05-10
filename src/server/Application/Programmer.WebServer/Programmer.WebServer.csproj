@@ -21,9 +21,10 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\MemoryCacheManager\MemoryCacheManager.csproj" />
-    <ProjectReference Include="..\Core\RabbitMqEventBus\RabbitMqEventBus.csproj" />
-    <ProjectReference Include="..\Object.Extensions\Object.Extensions.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\CacheManager\CacheManager.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\MemoryCacheManager\MemoryCacheManager.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\RabbitMqEventBus\RabbitMqEventBus.csproj" />
     <ProjectReference Include="..\Programmer.Common.Fakes\Programmer.Common.Fakes.csproj" />
     <ProjectReference Include="..\Programmer.Common\Programmer.Common.csproj" />
   </ItemGroup>

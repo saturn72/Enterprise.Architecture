@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Castle.DynamicProxy.Generators;
 using HttpUtilites;
 using Moq;
 using Shouldly;
@@ -14,7 +13,8 @@ namespace HttpUtilities.Tests
     public class HttpMessageInvokerExtensionsTests
     {
         [Fact]
-        public async Task HttpClientExtensions_Throws_OnEmtyFunc()
+        [Trait("Category", "long-test")]
+        public void HttpClientExtensions_Throws_OnEmtyFunc()
         {
             var hmh = new Mock<HttpMessageHandler>();
             var hmi = new Mock<HttpMessageInvoker>(hmh.Object);
@@ -30,6 +30,7 @@ namespace HttpUtilities.Tests
         }
 
         [Fact]
+        [Trait("Category", "long-test")]
         public async Task HttpClientExtensions_Fails()
         {
             var maxRetries = 3;
@@ -61,6 +62,7 @@ namespace HttpUtilities.Tests
         }
 
         [Fact]
+        [Trait("Category", "long-test")]
         public async Task HttpClientExtensions_Succes_AfterSingleAttempt()
         {
             var maxRetries = 3;

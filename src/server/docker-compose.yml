@@ -7,9 +7,10 @@ services:
       - "81:80"
     build:
       context: .
-      dockerfile: Programmer.WebServer/Dockerfile
+      dockerfile: Application/Programmer.WebServer/Dockerfile
     depends_on:
       - rabbitmq
+      - calculator.webserver
 
   pnpservicefake:
     image: pnpservicefake
@@ -20,7 +21,6 @@ services:
       dockerfile: Components/PnpServiceFake/Dockerfile
     depends_on:
       - programmer.webserver
-      - rabbitmq
 
   calculator.webserver:
     image: calculatorwebserver
@@ -29,6 +29,16 @@ services:
       dockerfile: Functional/Calculator.WebServer/Dockerfile
     ports:
       - "83:80"
+
+  programmerwebui:
+    image: programmer.webui
+    build:
+      context: .
+      dockerfile: ../web-ui/programmer-webui/Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - programmer.webserver
 
   rabbitmq:
     image: rabbitmq:3.7.3-management

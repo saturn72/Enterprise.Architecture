@@ -28,7 +28,7 @@ namespace Programmer.Test.Framework
         protected IntegrationTestBase()
         {
             var path = PlatformServices.Default.Application.ApplicationBasePath;
-            var serverDirectory = Path.GetFullPath(Path.Combine(path, @"../../../../../Programmer.WebServer"));
+            var serverDirectory = Path.GetFullPath(Path.Combine(path, @"../../../../../Application/Programmer.WebServer"));
             if (!Directory.Exists(serverDirectory))
                 throw new DirectoryNotFoundException("Failed to find server root dir in path: " + serverDirectory);
 
