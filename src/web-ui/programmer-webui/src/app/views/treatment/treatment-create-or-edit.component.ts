@@ -46,8 +46,8 @@ export class TreatmentCreateOrEditComponent implements OnInit {
 
       this.isCalculating = true;
       this.calculationService.getValues(key, this.treatment.values)
-        .subscribe(values => {
-          this.treatment.values = values[0];
+        .subscribe(values => {          
+          this.treatment.values = values;
           this.isCalculating = false;
         }, error => {
           this.notificationMessage = "Failed to connect to caluclation service. Please retry later";
