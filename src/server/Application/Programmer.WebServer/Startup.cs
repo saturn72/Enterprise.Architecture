@@ -13,6 +13,7 @@ using Programmer.Common.Fakes.Session;
 using Programmer.Common.Services.Command;
 using Programmer.Common.Services.Pump;
 using Programmer.Common.Services.Session;
+using Programmer.Common.Services.Treatment;
 using Programmer.WebServer.Integration;
 using Programmer.WebServer.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
@@ -73,6 +74,7 @@ namespace Programmer.WebServer
 
         private static void RegisterInternalServices(IServiceCollection services)
         {
+            services.AddScoped<ITreatmentService, TreatmentService>();
             services.AddScoped<IPumpInfoService, PumpInfoService>();
             services.AddScoped<ICommandService, CommandService>();
             services.AddScoped<ISessionManager, DummySessionManager>();

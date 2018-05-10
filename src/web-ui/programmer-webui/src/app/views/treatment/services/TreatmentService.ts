@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class TreatmentService {
 
-    readonly BASEURI : string = "http://localhost:3004/treatment/";
+    readonly BASEURI : string = "http://localhost:81/api/treatment/";
 
     constructor(private http: HttpClient) {
     }

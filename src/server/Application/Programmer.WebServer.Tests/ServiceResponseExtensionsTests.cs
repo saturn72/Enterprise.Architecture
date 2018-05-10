@@ -15,6 +15,7 @@ namespace Programmer.WebServer.Tests
         [InlineData( ServiceResponseResult.Updated, typeof(AcceptedResult))]
         [InlineData( ServiceResponseResult.BadOrMissingData, typeof(BadRequestObjectResult))]
         [InlineData( ServiceResponseResult.NotFound, typeof(NotFoundObjectResult))]
+        [InlineData( ServiceResponseResult.Read, typeof(OkObjectResult))]
         public void ServiceResponseExtensions_ToActionResult_ReturnsErrorBy_AssertByMessageResponseType(ServiceResponseResult serviceResponseResult, Type expType)
         {
             var serRes = new ServiceResponse<string>

@@ -9,6 +9,7 @@ namespace Programmer.Common.Tests.Services
         [Theory]
         [InlineData(null, ServiceResponseResult.NotFound)]
         [InlineData("some-error-message", ServiceResponseResult.NotFound)]
+        [InlineData(null, ServiceResponseResult.Read)]
         public void ServiceResponseResult_IsSuccessful_False(string errorMessage, ServiceResponseResult result)
         {
             var srvRes = new ServiceResponse<string>()

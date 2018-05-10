@@ -9,6 +9,7 @@ namespace Programmer.Common.Services
         Created,
         Updated,
         NotAcceptable,
-        Accepted
+        Accepted,
+        Read
     }
 }
