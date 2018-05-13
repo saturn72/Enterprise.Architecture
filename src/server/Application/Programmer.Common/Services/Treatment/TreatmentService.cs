@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Programmer.Common.Domain.Treatment;
 using Programmer.Common.Services.Command;
@@ -7,14 +8,17 @@ namespace Programmer.Common.Services.Treatment
 {
     public class TreatmentService : ITreatmentService
     {
-        private readonly ITreatmentRepository _treatmentRepository;
-        private readonly ICommandManager _commandManager;
+        #region CTOR
 
         public TreatmentService(ITreatmentRepository treatmentRepository, ICommandManager commandManager)
         {
             _treatmentRepository = treatmentRepository;
             _commandManager = commandManager;
         }
+
+        #endregion
+
+        #region Get All
 
         public async Task<ServiceResponse<IEnumerable<TreatmentModel>>> GetAll()
         {
@@ -25,10 +29,35 @@ namespace Programmer.Common.Services.Treatment
             };
         }
 
+        #endregion
+
+        #region GetById
+
+        public async Task<ServiceResponse<TreatmentModel>> GetById(long id)
+        {
+            var dbData = await Task.Run(() => _treatmentRepository.GetById(id));
+            return new ServiceResponse<TreatmentModel>
+            {
+                Result = ServiceResponseResult.Read,
+                Data = dbData
+            };
+        }
+
+        #endregion
+
+        #region Fields
+
+        private readonly ITreatmentRepository _treatmentRepository;
+        private readonly ICommandManager _commandManager;
+
+        #endregion
+
+        #region Create
+
         public async Task<ServiceResponse<TreatmentModel>> CreateTreament(TreatmentModel treatmentModel)
         {
             var cmdRequest = ToCommandRequest("treatment", treatmentModel.SessionId, treatmentModel);
-            var cmdRes =  await _commandManager.SendCommand(cmdRequest);
+            var cmdRes = await _commandManager.SendCommand(cmdRequest);
             var srvRes = new ServiceResponse<TreatmentModel>
             {
                 Result = cmdRes.Result,
@@ -55,6 +84,8 @@ namespace Programmer.Common.Services.Treatment
 
             return cmdReq;
         }
+
+        #endregion
 
         #endregion
     }

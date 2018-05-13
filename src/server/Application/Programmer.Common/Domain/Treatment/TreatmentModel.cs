@@ -1,6 +1,6 @@
 namespace Programmer.Common.Domain.Treatment
 {
-    public class TreatmentModel:DomainModelBase<string>
+    public class TreatmentModel:DomainModelBase<long>
     {
         public string SessionId;
         public decimal Vtbi { get; set; }

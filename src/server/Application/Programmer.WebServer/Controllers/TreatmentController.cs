@@ -35,6 +35,19 @@ namespace Programmer.WebServer.Controllers
         }
 
         /// <summary>
+        /// Gets treatment by ID
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetById(long id)
+        {
+            var srvRes = await _treamentService.GetById(id);
+            return srvRes.ToActionResult();
+        }
+
+        /// <summary>
         ///     Sends treatment to pump
         /// </summary>
         /// <returns></returns>

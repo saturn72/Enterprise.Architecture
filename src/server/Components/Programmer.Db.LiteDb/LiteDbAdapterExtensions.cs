@@ -13,13 +13,22 @@ namespace Programmer.Db.LiteDb
         {
             var inserted = default(TObject);
 
-            dbAdapter.Command(db=>
+            dbAdapter.Command(db =>
             {
                 var col = db.GetCollection<TObject>();
-                    col.Insert(toAdd);
+                col.Insert(toAdd);
                 inserted = toAdd;
             });
             return inserted;
+        }
+
+        public static TObject GetById<TObject>(this LiteDbAdapter dbAdapter, long id)
+        {
+            return dbAdapter.Query(d =>
+            {
+                var col = d.GetCollection<TObject>();
+                return col.FindById(id);
+            });
         }
     }
 }

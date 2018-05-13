@@ -9,7 +9,8 @@
               <i class="fa fa-align-justify"></i> System Treatments
             </div>
             <div class="col">
-              <button type="button" class="btn btn-block btn-ghost-primary" (click)="treatmentCreate()"><i class="fa fa-plus" aria-hidden="true"></i> Create New</button>
+              <button type="button" class="btn btn-block btn-ghost-primary" (click)="treatmentCreate()">
+                <i class="fa fa-plus" aria-hidden="true"></i> Create New</button>
             </div>
           </div>
         </div>
@@ -25,7 +26,8 @@
             <tbody>
               <tr *ngFor="let treat of treatments">
                 <td scope="row">{{treat.id}}</td>
-                <td>VTBI: {{treat.values.vtbi}} Dose: {{treat.values.dose}} Rate: {{treat.values.rate}}</td>
+                <td>{{treat.values.vtbi}} </td>
+                <!-- Dose: {{treat.values.dose}} Rate: {{treat.values.rate}}</td> -->
                 <td>
                   <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-link" (click)="treatmentRead(treat.id)">More..</button>

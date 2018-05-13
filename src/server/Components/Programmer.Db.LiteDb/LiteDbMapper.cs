@@ -14,7 +14,8 @@ namespace Programmer.Db.LiteDb
             {
                 GetCollectionAndEnsureIndex(db, new Expression<Func<TreatmentModel, object>>[]
                 {
-                    x => x.SessionId
+                    x => x.SessionId,
+                    x => x.Id
                 });
             }
         }

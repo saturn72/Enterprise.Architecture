@@ -31,5 +31,10 @@ namespace Programmer.Db.LiteDb.Repositories
         {
             _dbAdapter.Create(treatmentModel);
         }
+
+        public TreatmentModel GetById(long id)
+        {
+            return _dbAdapter.GetById<TreatmentModel>(id);
+        }
     }
 }

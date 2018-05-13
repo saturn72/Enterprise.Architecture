@@ -7,5 +7,6 @@ namespace Programmer.Common.Services.Treatment
     {
         IEnumerable<TreatmentModel> GetAll();
         void CreateTreatment(TreatmentModel treatmentModel);
+        TreatmentModel GetById(long id);
     }
 }

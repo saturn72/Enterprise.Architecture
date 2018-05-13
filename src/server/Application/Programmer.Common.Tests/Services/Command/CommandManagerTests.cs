@@ -10,10 +10,10 @@ using Xunit;
 
 namespace Programmer.Common.Tests.Services.Command
 {
-    public class CommandServiceTests
+    public class CommandManagerTests
     {
         [Fact]
-        public async Task CommandService_SendCommand_SessionNotFound()
+        public async Task CommandManager_SendCommand_SessionNotFound()
         {
             var sessionManager = new Mock<ISessionManager>();
             sessionManager.Setup(sm => sm.GetSessionByToken(It.IsAny<string>())).ReturnsAsync(null as SessionData);
@@ -26,7 +26,7 @@ namespace Programmer.Common.Tests.Services.Command
         }
 
         [Fact]
-        public async Task CommandService_SendCommand_PumpNotConnected()
+        public async Task CommandManager_SendCommand_PumpNotConnected()
         {
             var sd = new SessionData("some-token", "some-client-id", "some-resource-id");
 
@@ -42,7 +42,7 @@ namespace Programmer.Common.Tests.Services.Command
         }
 
         [Fact]
-        public async Task CommandService_SendCommand_BadCommand()
+        public async Task CommandManager_SendCommand_BadCommand()
         {
             var sd = new SessionData("some-token", "some-client-id", "some-resource-id");
 
@@ -61,7 +61,7 @@ namespace Programmer.Common.Tests.Services.Command
         }
 
         [Fact]
-        public async Task CommandService_SendCommand_PublishCommand()
+        public async Task CommandManager_SendCommand_PublishCommand()
         {
             var sd = new SessionData("some-token", "some-client-id", "some-resource-id");
 

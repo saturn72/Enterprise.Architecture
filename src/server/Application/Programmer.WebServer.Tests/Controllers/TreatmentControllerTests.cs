@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Programmer.Common.Domain.Treatment;
 using Programmer.Common.Services;
-using Programmer.Common.Services.Command;
 using Programmer.Common.Services.Treatment;
 using Programmer.WebServer.Controllers;
 using Shouldly;
@@ -16,6 +16,7 @@ namespace Programmer.WebServer.Tests.Controllers
 {
     public class TreatmentControllerTests
     {
+        #region Create
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -67,11 +68,15 @@ namespace Programmer.WebServer.Tests.Controllers
             };
             controller.ControllerContext.HttpContext.Request.Headers[TreatmentController.PumpSessionHeaderName] =
                 "some-session-id";
-                var res = await controller.CreateTreatment(tm);
+            var res = await controller.CreateTreatment(tm);
 
             var or = res.ShouldBeOfType<ObjectResult>();
             or.StatusCode.ShouldBe((int) HttpStatusCode.NotAcceptable);
         }
+
+        #endregion Create
+
+        #region Get All
 
         [Fact]
         public async Task TreatmentController_GetAll()
@@ -98,5 +103,40 @@ namespace Programmer.WebServer.Tests.Controllers
 
             var response = res.ShouldBeOfType<OkObjectResult>();
         }
+        #endregion
+
+        #region GetById
+
+        [Theory]
+        [MemberData(nameof(TreatmentController_GetById_Data))]
+        public async Task TreatmentController_GetById(TreatmentModel model, ServiceResponseResult serviceResponseResult, Type expResponseType)
+        {
+            
+            var srvRes = new ServiceResponse<TreatmentModel>
+            {
+                Result = serviceResponseResult,
+                Data = model,
+                Message = "some-message"
+            };
+
+            var tSrv = new Mock<ITreatmentService>();
+            tSrv.Setup(ts => ts.GetById(It.IsAny<long>()))
+                .ReturnsAsync(srvRes);
+
+            var ctrl = new TreatmentController(tSrv.Object);
+            var res = await ctrl.GetById(123);
+
+            res.ShouldBeOfType(expResponseType);
+        }
+
+
+        public static IEnumerable<object[]> TreatmentController_GetById_Data =>
+            new[]{
+                new object[] { null, ServiceResponseResult.NotFound, typeof(NotFoundObjectResult)},
+                new object[] { new TreatmentModel{Id = 123}, ServiceResponseResult.Read, typeof(OkObjectResult)},
+            };
+
+        #endregion
+
     }
 }

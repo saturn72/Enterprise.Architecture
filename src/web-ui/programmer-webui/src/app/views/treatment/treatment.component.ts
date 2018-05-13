@@ -18,11 +18,20 @@ export class TreatmentComponent implements OnInit {
     this.getTreatments();
   }
 
-  getTreatments(){
+  getTreatments() {
     this.treatmentService.getAll()
-      .subscribe(data => {
-        console.log(JSON.stringify(data));
-        this.treatments = data;
+      .subscribe(res => {
+        this.treatments = new Array<TreatmentModel>();
+        res.data.forEach(element => {
+          const tm = new TreatmentModel();
+          tm.id = element.id;
+          tm.values = {
+            vtbi: element.vtbi,
+            rate: element.rate,
+            dose: element.dose
+          }
+          this.treatments.push(tm);
+        })
       });
   }
 

@@ -13,6 +13,8 @@ namespace Programmer.Common.Tests.Services.Treatment
 {
     public class TreatmentServiceTests
     {
+        #region GetAll
+
         public static IEnumerable<object[]> TreatmentService_GetAll_Data =>
             new[]
             {
@@ -44,7 +46,36 @@ namespace Programmer.Common.Tests.Services.Treatment
             res.Data.ShouldBe(dbData);
             res.Message.ShouldBeNull();
         }
+        #endregion
+        #region GetById
 
+        public static IEnumerable<object[]> TreatmentService_GetById_Data =>
+            new[]
+            {
+                new object[] {null},
+                new object[]
+                {
+                        new TreatmentModel {SessionId = "1"},
+                }
+            };
+
+        [Theory]
+        [MemberData(nameof(TreatmentService_GetById_Data))]
+        public async Task TreatmentService_GetById(TreatmentModel dbModel)
+        {
+            var tRepo = new Mock<ITreatmentRepository>();
+            tRepo.Setup(t => t.GetById(It.IsAny<long>()))
+                .Returns(dbModel);
+
+            var srv = new TreatmentService(tRepo.Object, null);
+            var res = await srv.GetById(12);
+
+            res.Result.ShouldBe(ServiceResponseResult.Read);
+            res.Data.ShouldBe(dbModel);
+            res.Message.ShouldBeNull();
+        }
+
+        #endregion
         #region Create Treament
 
         [Theory]

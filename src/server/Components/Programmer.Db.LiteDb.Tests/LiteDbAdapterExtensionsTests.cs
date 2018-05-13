@@ -26,5 +26,16 @@ namespace Programmer.Db.LiteDb.Tests
 
             da.Verify(d => d.Command(It.IsAny<Action<LiteDatabase>>()), Times.Once);
         }
+
+        [Fact]
+        public void LiteDbAdapterExtensions_GetById()
+        {
+            var da = new Mock<LiteDbAdapter>("dbName.db");
+            const long id = 123;
+
+            LiteDbAdapterExtensions.GetById<string>(da.Object, id);
+            da.Verify(d => d.Query(It.IsAny<Func<LiteDatabase, string>>()), Times.Once);
+        }
+
     }
 }

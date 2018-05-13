@@ -12,8 +12,8 @@ export class TreatmentService {
     constructor(private http: HttpClient) {
     }
 
-    getAll(): Observable<TreatmentModel[]> {
-        return this.http.get<TreatmentModel[]>(this.BASEURI);
+    getAll(): Observable<any> {
+        return this.http.get<any>(this.BASEURI);
     }
 
     getById(id: string): Observable<TreatmentModel> {
