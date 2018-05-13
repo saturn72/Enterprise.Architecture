@@ -4,7 +4,7 @@ using Programmer.Common.Services.Session;
 
 namespace Programmer.Common.Services.Command
 {
-    public class CommandService : ICommandService
+    public class CommandManager : ICommandManager
     {
         #region fields
         private readonly ISessionManager _sessionManager;
@@ -14,7 +14,7 @@ namespace Programmer.Common.Services.Command
         #endregion
 
         #region CTOR
-        public CommandService(ISessionManager sessionManager, ICommandVerifier commandVerifier,
+        public CommandManager(ISessionManager sessionManager, ICommandVerifier commandVerifier,
             IEventBus eventBus)
         {
             _sessionManager = sessionManager;

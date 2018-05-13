@@ -36,6 +36,7 @@ namespace Calculator.WebServer
             }
             app.UseCors(builder =>
                 builder.WithOrigins("*"));
+            
             //Swashbucke
             app.UseSwagger();
             app.UseSwaggerUI(c =>

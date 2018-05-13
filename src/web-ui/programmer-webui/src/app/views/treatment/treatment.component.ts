@@ -20,7 +20,10 @@ export class TreatmentComponent implements OnInit {
 
   getTreatments(){
     this.treatmentService.getAll()
-      .subscribe(data => this.treatments = data);
+      .subscribe(data => {
+        console.log(JSON.stringify(data));
+        this.treatments = data;
+      });
   }
 
   treatmentCreate() {

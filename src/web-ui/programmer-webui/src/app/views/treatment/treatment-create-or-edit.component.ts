@@ -13,6 +13,8 @@ import { CalculationService } from './services/CalculationService';
 })
 export class TreatmentCreateOrEditComponent implements OnInit {
 
+  private readonly ERROR:number = 1;
+
   notificationMessage: string;
   notificationType: string;
   hasNotification: boolean;
@@ -44,15 +46,14 @@ export class TreatmentCreateOrEditComponent implements OnInit {
       || (this.treatment.values.vtbi > 0 && this.treatment.values.dose > 0)
       || (this.treatment.values.rate > 0 && this.treatment.values.dose > 0)) {
 
+      this.hasNotification = false;
       this.isCalculating = true;
       this.calculationService.getValues(key, this.treatment.values)
-        .subscribe(values => {          
+        .subscribe(values => {
           this.treatment.values = values;
           this.isCalculating = false;
         }, error => {
-          this.notificationMessage = "Failed to connect to caluclation service. Please retry later";
-          this.notificationType = "alert alert-danger";
-          this.hasNotification = true;
+          this.showNotification(this.ERROR, "Failed to connect to caluclation service. Please retry later");
           this.isCalculating = false;
         });
     }
@@ -63,6 +64,8 @@ export class TreatmentCreateOrEditComponent implements OnInit {
     this.treatmentService.create(this.treatment)
       .subscribe(data => {
         this.router.navigate(["../"], { relativeTo: this.activatedRoute })
+      }, error => {
+        this.showNotification(this.ERROR, error.error.message);
       });
   }
   isValidForm() {
@@ -73,5 +76,14 @@ export class TreatmentCreateOrEditComponent implements OnInit {
   resetForm() {
     this.treatment = new TreatmentModel();
     this.treatment.values = new TreatmentValuesModel();
+  }
+
+  showNotification(notificationCode: number, message: string) {
+    this.notificationMessage = message;
+    switch (notificationCode) {
+      case this.ERROR:
+        this.notificationType = "alert alert-danger";
+    }
+    this.hasNotification = true;
   }
 }

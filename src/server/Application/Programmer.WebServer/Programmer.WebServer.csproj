@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\MemoryCacheManager\MemoryCacheManager.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\RabbitMqEventBus\RabbitMqEventBus.csproj" />
+    <ProjectReference Include="..\..\Components\Programmer.Db.LiteDb\Programmer.Db.LiteDb.csproj" />
     <ProjectReference Include="..\Programmer.Common.Fakes\Programmer.Common.Fakes.csproj" />
     <ProjectReference Include="..\Programmer.Common\Programmer.Common.csproj" />
   </ItemGroup>

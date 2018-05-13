@@ -20,7 +20,7 @@ namespace Programmer.Common.Tests.Services.Command
 
             var cmdReq = new CommandRequest("some-command", "some-session-id");
 
-            var cmdSrv = new CommandService(sessionManager.Object, null, null);
+            var cmdSrv = new CommandManager(sessionManager.Object, null, null);
             var res = await cmdSrv.SendCommand(cmdReq);
             res.Result.ShouldBe(ServiceResponseResult.NotFound);
         }
@@ -36,7 +36,7 @@ namespace Programmer.Common.Tests.Services.Command
 
             var cmdReq = new CommandRequest("some-command", "some-session-id");
 
-            var cmdSrv = new CommandService(sessionManager.Object, null, null);
+            var cmdSrv = new CommandManager(sessionManager.Object, null, null);
             var res = await cmdSrv.SendCommand(cmdReq);
             res.Result.ShouldBe(ServiceResponseResult.NotAcceptable);
         }
@@ -55,7 +55,7 @@ namespace Programmer.Common.Tests.Services.Command
                 .Returns(false);
             var cmdReq = new CommandRequest("some-command", "some-session-id");
 
-            var cmdSrv = new CommandService(sessionManager.Object, cmdVer.Object, null);
+            var cmdSrv = new CommandManager(sessionManager.Object, cmdVer.Object, null);
             var res = await cmdSrv.SendCommand(cmdReq);
             res.Result.ShouldBe(ServiceResponseResult.BadOrMissingData);
         }
@@ -73,7 +73,7 @@ namespace Programmer.Common.Tests.Services.Command
             var cmdReq = new CommandRequest("some-command", "some-session-id");
 
             var eventBus = new Mock<IEventBus>();
-            var cmdSrv = new CommandService(sessionManager.Object, cmdVer.Object, eventBus.Object);
+            var cmdSrv = new CommandManager(sessionManager.Object, cmdVer.Object, eventBus.Object);
             var res = await cmdSrv.SendCommand(cmdReq);
             res.Result.ShouldBe(ServiceResponseResult.Accepted);
 

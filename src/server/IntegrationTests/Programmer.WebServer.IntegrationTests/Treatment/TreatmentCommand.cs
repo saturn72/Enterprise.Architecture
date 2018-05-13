@@ -7,13 +7,13 @@ using Programmer.Test.Framework.Q;
 using Shouldly;
 using Xunit;
 
-namespace Programmer.WebServer.IntegrationTests.Commands
+namespace Programmer.WebServer.IntegrationTests.Treatment
 {
     public class TreatmentCommand : IntegrationTestBase
     {
         [Trait("Category","integration_tests")]
         [Fact]
-        public async Task SetTreatment_MissingXSessionToken()
+        public async Task CreateTreatment_MissingXSessionToken()
         {
             var treatment = new
             {
@@ -22,7 +22,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
                 dose = 5364
             };
 
-            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/command/treatment", treatment);
+            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/treatment", treatment);
             var res = await HttpClient.SendAsync(req);
             res.IsSuccessStatusCode.ShouldBeFalse();
             res.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -30,7 +30,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
 
         [Trait("Category","integration_tests")]
         [Fact]
-        public async Task SetTreatment_AddToQ()
+        public async Task CreateTreatment_AddToQ()
         {
             var treatment = new
             {
@@ -39,7 +39,7 @@ namespace Programmer.WebServer.IntegrationTests.Commands
                 dose = 5364
             };
 
-            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/command/treatment", treatment);
+            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/treatment", treatment);
             req.Headers.Add("X-Session-Token", "some-session-id");
 
             var res = await HttpClient.SendAsync(req);

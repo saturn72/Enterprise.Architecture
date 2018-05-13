@@ -14,6 +14,8 @@ using Programmer.Common.Services.Command;
 using Programmer.Common.Services.Pump;
 using Programmer.Common.Services.Session;
 using Programmer.Common.Services.Treatment;
+using Programmer.Db.LiteDb;
+using Programmer.Db.LiteDb.Repositories;
 using Programmer.WebServer.Integration;
 using Programmer.WebServer.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
@@ -45,6 +47,8 @@ namespace Programmer.WebServer
         {
             services.AddMemoryCache();
             services.AddMvc();
+            services.AddCors();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info {Title = "Programmer API Tester", Version = "v1"});
@@ -74,9 +78,11 @@ namespace Programmer.WebServer
 
         private static void RegisterInternalServices(IServiceCollection services)
         {
+            services.AddTransient(sp => new LiteDbAdapter("programmer.db"));
             services.AddScoped<ITreatmentService, TreatmentService>();
+            services.AddTransient<ITreatmentRepository, TreatmentRepository>();
             services.AddScoped<IPumpInfoService, PumpInfoService>();
-            services.AddScoped<ICommandService, CommandService>();
+            services.AddScoped<ICommandManager, CommandManager>();
             services.AddScoped<ISessionManager, DummySessionManager>();
             services.AddSingleton<ICommandVerifier, DummyCommandVerifier>();
         }
@@ -107,6 +113,8 @@ namespace Programmer.WebServer
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
                 ReceiveBufferSize = 4 * 1024
             };
+            app.UseCors(builder =>
+                builder.WithOrigins("*").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseWebSockets(webSocketOptions);
 
             app.Use(async (context, next) =>
