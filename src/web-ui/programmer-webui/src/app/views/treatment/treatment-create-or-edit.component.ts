@@ -69,7 +69,8 @@ export class TreatmentCreateOrEditComponent implements OnInit {
 
     this.treatmentService.create(this.treatment)
       .subscribe(data => {
-        this.router.navigate(["../"], { relativeTo: this.activatedRoute })
+        const toTreatmentList = this.id ? "../.." : "../";
+        this.router.navigate([toTreatmentList], { relativeTo: this.activatedRoute })
       }, error => {
         this.showNotification(this.ERROR, error.error.message);
       });
