@@ -7,13 +7,14 @@ import { TreatmentModel, TreatmentValuesModel } from './models/TreatmentModel';
 import { TreatmentService } from './services/TreatmentService';
 import { TreatmentStatus } from './models/TreatmentStatus';
 import { CalculationService } from './services/CalculationService';
+import { TreatmentMapper } from './services/TreatmentMapper';
 
 @Component({
   templateUrl: 'treatment-create-or-edit.component.html'
 })
 export class TreatmentCreateOrEditComponent implements OnInit {
 
-  private readonly ERROR:number = 1;
+  private readonly ERROR: number = 1;
 
   notificationMessage: string;
   notificationType: string;
@@ -35,7 +36,12 @@ export class TreatmentCreateOrEditComponent implements OnInit {
 
     if (this.id) {
       this.treatmentService.getById(this.id)
-        .subscribe(data => this.treatment = data);
+        .subscribe(res => {
+          this.treatment = TreatmentMapper.ApiModelToTreatmentModel(res.data);
+        },
+          error => {
+            this.showNotification(this.ERROR, "Failed to fetch treatment data. Please retry later");
+          });
     }
     else {
       this.resetForm();

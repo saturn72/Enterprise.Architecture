@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Programmer.Common.Domain.Treatment;
-using Programmer.Common.Services.Command;
 using Programmer.Common.Services.Treatment;
 
 namespace Programmer.WebServer.Controllers
@@ -21,11 +20,18 @@ namespace Programmer.WebServer.Controllers
 
         #endregion
 
+        #region Fields
 
+        private readonly ITreatmentService _treamentService;
+
+        #endregion
+
+        #region CTOR
         public TreatmentController(ITreatmentService treamentService)
         {
             _treamentService = treamentService;
         }
+        #endregion
 
         [HttpGet]
         public async Task<IActionResult> ReadAll()
@@ -35,7 +41,7 @@ namespace Programmer.WebServer.Controllers
         }
 
         /// <summary>
-        /// Gets treatment by ID
+        ///     Gets treatment by ID
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
@@ -64,16 +70,10 @@ namespace Programmer.WebServer.Controllers
                     message = errorMessage,
                     data = treatmentModel
                 });
-            var srvRes = await  _treamentService.CreateTreament(treatmentModel);
+            var srvRes = await _treamentService.CreateTreament(treatmentModel);
 
             return srvRes.ToActionResult();
         }
-
-        #region Fields
-
-        private readonly ITreatmentService _treamentService;
-
-        #endregion
 
         #region create treamtnet Utilities
 
@@ -95,8 +95,6 @@ namespace Programmer.WebServer.Controllers
 
             return true;
         }
-
-        
 
         #endregion
     }

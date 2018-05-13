@@ -36,9 +36,12 @@ namespace Programmer.Common.Services.Treatment
         public async Task<ServiceResponse<TreatmentModel>> GetById(long id)
         {
             var dbData = await Task.Run(() => _treatmentRepository.GetById(id));
+            var serviceResponseResult = dbData.IsNull()
+                ? ServiceResponseResult.NotFound
+                : ServiceResponseResult.Read;
             return new ServiceResponse<TreatmentModel>
             {
-                Result = ServiceResponseResult.Read,
+                Result = serviceResponseResult,
                 Data = dbData
             };
         }

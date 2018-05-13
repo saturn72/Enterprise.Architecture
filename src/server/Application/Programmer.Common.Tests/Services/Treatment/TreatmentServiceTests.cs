@@ -52,16 +52,16 @@ namespace Programmer.Common.Tests.Services.Treatment
         public static IEnumerable<object[]> TreatmentService_GetById_Data =>
             new[]
             {
-                new object[] {null},
+                new object[] {null, ServiceResponseResult.NotFound},
                 new object[]
                 {
-                        new TreatmentModel {SessionId = "1"},
+                        new TreatmentModel {SessionId = "1"},ServiceResponseResult.Read
                 }
             };
 
         [Theory]
         [MemberData(nameof(TreatmentService_GetById_Data))]
-        public async Task TreatmentService_GetById(TreatmentModel dbModel)
+        public async Task TreatmentService_GetById(TreatmentModel dbModel, ServiceResponseResult expServiceResult)
         {
             var tRepo = new Mock<ITreatmentRepository>();
             tRepo.Setup(t => t.GetById(It.IsAny<long>()))
@@ -70,7 +70,7 @@ namespace Programmer.Common.Tests.Services.Treatment
             var srv = new TreatmentService(tRepo.Object, null);
             var res = await srv.GetById(12);
 
-            res.Result.ShouldBe(ServiceResponseResult.Read);
+            res.Result.ShouldBe(expServiceResult);
             res.Data.ShouldBe(dbModel);
             res.Message.ShouldBeNull();
         }

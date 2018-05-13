@@ -8,6 +8,14 @@ namespace Object.Extensions.Tests
     public class ObjectExtensionsTests
     {
         [Theory]
+        [InlineData(null, true)]
+        [InlineData("string", false)]
+        public void ObjectExtensions_IsNull(object o, bool expResult)
+        {
+            o.IsNull().ShouldBe(expResult);
+        }
+
+        [Theory]
         [InlineData(1, "Int32")]
         [InlineData("string", "String")]
         public void ObjectExtensions_ToCSharpName_ByInstance(object o, string expName)

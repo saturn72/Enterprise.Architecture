@@ -15,6 +15,8 @@ namespace Programmer.WebServer.IntegrationTests.Treatment
 {
     public class TreatmentApi : IntegrationTestBase
     {
+        private const string RestResource = "/api/treatment/";
+
         [Trait("Category", "integration_tests")]
         [Trait("Category", "create_treament")]
         [Fact]
@@ -27,7 +29,7 @@ namespace Programmer.WebServer.IntegrationTests.Treatment
                 dose = 5364
             };
 
-            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/treatment", treatment);
+            var req = RestUtil.BuildRequest(HttpMethod.Post, RestResource, treatment);
             req.Headers.Add("X-Session-Token", "some-session-id");
 
             var res = await HttpClient.SendAsync(req);
@@ -49,23 +51,18 @@ namespace Programmer.WebServer.IntegrationTests.Treatment
                 dose = 5364
             };
 
-            var req = RestUtil.BuildRequest(HttpMethod.Post, "/api/treatment", treatment);
+            var req = RestUtil.BuildRequest(HttpMethod.Post, RestResource, treatment);
             var res = await HttpClient.SendAsync(req);
             res.IsSuccessStatusCode.ShouldBeFalse();
             res.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
-
-
-        #region Read All
 
         [Trait("Category", "integration_tests")]
         [Trait("Category", "read_treatment")]
         [Fact]
         public async Task CreateTreatment_ReadAll()
         {
-            var restResource = "/api/treatment";
-
-            var  expTreatments = new List<TreatmentTestModel>();
+            var expTreatments = new List<TreatmentTestModel>();
             var random = new Random(1024);
             for (var i = 0; i < 5; i++)
             {
@@ -78,14 +75,14 @@ namespace Programmer.WebServer.IntegrationTests.Treatment
                 };
                 expTreatments.Add(treatment);
 
-                var req = RestUtil.BuildRequest(HttpMethod.Post, restResource, treatment);
+                var req = RestUtil.BuildRequest(HttpMethod.Post, RestResource, treatment);
                 req.Headers.Add("X-Session-Token", "some-session-id");
                 var res = await HttpClient.SendAsync(req);
                 var addResponseContent = await RestUtil.ExtractJObject(res);
                 treatment.Id = addResponseContent["data"]["id"].Value<long>();
             }
 
-            var getAllReq = RestUtil.BuildRequest(HttpMethod.Get, restResource, null);
+            var getAllReq = RestUtil.BuildRequest(HttpMethod.Get, RestResource, null);
 
             var getAllRes = await HttpClient.SendAsync(getAllReq);
             getAllRes.EnsureSuccessStatusCode();
@@ -96,14 +93,60 @@ namespace Programmer.WebServer.IntegrationTests.Treatment
             models.Length.ShouldBeGreaterThanOrEqualTo(expTreatments.Count);
 
             foreach (var et in expTreatments)
-                models.Any(r=>
-                    r.SessionId == et.SessionId 
+            {
+                models.Count(r => r.Id == et.Id).ShouldBe(1);
+                models.Any(r =>
+                    r.SessionId == et.SessionId
                     && r.Id == et.Id
                     && r.Rate == et.Rate
                     && r.Vtbi == et.Vtbi
                     && r.Dose == et.Dose).ShouldBeTrue();
+            }
         }
 
-        #endregion
+        [Trait("Category", "integration_tests")]
+        [Trait("Category", "read_treatment")]
+        [Fact]
+        public async Task CreateTreatment_ReadById()
+        {
+            var random = new Random(1024);
+            var expTreatment = new TreatmentTestModel
+            {
+                Vtbi = random.Next(500),
+                Rate = random.Next(500),
+                Dose = random.Next(500),
+                Id = default(long)
+            };
+
+            var req = RestUtil.BuildRequest(HttpMethod.Post, RestResource, expTreatment);
+            req.Headers.Add("X-Session-Token", "some-session-id");
+            var res = await HttpClient.SendAsync(req);
+            var addResponseContent = await RestUtil.ExtractJObject(res);
+            expTreatment.Id = addResponseContent["data"]["id"].Value<long>();
+
+            var getByIdReq = RestUtil.BuildRequest(HttpMethod.Get, RestResource + expTreatment.Id, null);
+
+            var getByIdRes = await HttpClient.SendAsync(getByIdReq);
+            getByIdRes.EnsureSuccessStatusCode();
+
+            var content = await RestUtil.ExtractJObject(getByIdRes);
+            var data = content["data"];
+
+            data.Value<string>("sessionId").ShouldBe(expTreatment.SessionId);
+            data.Value<long>("id").ShouldBe(expTreatment.Id);
+            data.Value<decimal>("rate").ShouldBe(expTreatment.Rate);
+            data.Value<decimal>("vtbi").ShouldBe(expTreatment.Vtbi);
+            data.Value<decimal>("dose").ShouldBe(expTreatment.Dose);
+        }
+
+        [Trait("Category", "integration_tests")]
+        [Trait("Category", "read_treatment")]
+        [Fact]
+        public async Task CreateTreatment_ReadById_NotFound()
+        {
+            var notFoundRequest = RestUtil.BuildRequest(HttpMethod.Get, RestResource + long.MaxValue, null);
+            var notFoundResponse = await HttpClient.SendAsync(notFoundRequest);
+            notFoundResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
     }
 }

@@ -16,9 +16,10 @@ export class TreatmentService {
         return this.http.get<any>(this.BASEURI);
     }
 
-    getById(id: string): Observable<TreatmentModel> {
-        return this.http.get<TreatmentModel>(this.BASEURI + id);
+    getById(id: string): Observable<any> {
+        return this.http.get<any>(this.BASEURI + id);
     }
+    
     create(treatment: TreatmentModel): Observable<TreatmentModel> {
         const body = {
             vtbi: treatment.values.vtbi,
