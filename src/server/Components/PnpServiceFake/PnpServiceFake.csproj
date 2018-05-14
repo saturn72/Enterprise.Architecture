@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
-    <ProjectReference Include="..\..\BuildingBlocks\RabbitMqEventBus\RabbitMqEventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Integration\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Integration\RabbitMqEventBus\RabbitMqEventBus.csproj" />
   </ItemGroup>
 
   <ItemGroup>

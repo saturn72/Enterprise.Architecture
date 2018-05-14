@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Utilities\Object.Extensions\Object.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Utilities\Object.Extensions\Object.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

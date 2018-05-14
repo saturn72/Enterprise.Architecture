@@ -5,8 +5,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BuildingBlocks\CacheManager\CacheManager.csproj" />
-    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Caching\CacheManager\CacheManager.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Integration\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\Utilities\Object.Extensions\Object.Extensions.csproj" />
   </ItemGroup>
 

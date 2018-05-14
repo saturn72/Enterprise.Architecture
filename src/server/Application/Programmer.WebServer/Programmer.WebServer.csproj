@@ -21,10 +21,10 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BuildingBlocks\CacheManager\CacheManager.csproj" />
-    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
-    <ProjectReference Include="..\..\BuildingBlocks\MemoryCacheManager\MemoryCacheManager.csproj" />
-    <ProjectReference Include="..\..\BuildingBlocks\RabbitMqEventBus\RabbitMqEventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Caching\CacheManager\CacheManager.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Caching\MemoryCacheManager\MemoryCacheManager.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Integration\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Integration\RabbitMqEventBus\RabbitMqEventBus.csproj" />
     <ProjectReference Include="..\..\Components\Programmer.Db.LiteDb\Programmer.Db.LiteDb.csproj" />
     <ProjectReference Include="..\Programmer.Common.Fakes\Programmer.Common.Fakes.csproj" />
     <ProjectReference Include="..\Programmer.Common\Programmer.Common.csproj" />
