@@ -21,8 +21,9 @@ namespace Programmer.WebServer
                     Thread.Sleep(150);
                     continue;
                 }
+
                 await webSocket.SendAsync(
-                    new ArraySegment<byte>(Buffer.ToArray(), 0, Math.Min(Buffer.Count, 4*1024)), 
+                    new ArraySegment<byte>(Buffer.ToArray(), 0, Buffer.Count), 
                     WebSocketMessageType.Text,
                     true,
                     CancellationToken.None);

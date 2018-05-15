@@ -5,7 +5,6 @@ import { Observer } from 'rxjs/Observer';
 import { WebSocketMessageModel } from '../models/WebSocketMessageModel';
 import * as socketIo from 'socket.io-client';
 
-const SERVER_URL = 'http://localhost:8080';
 Injectable()
 export class WebSocketService {
     private socket: Subject<WebSocketMessageModel>;

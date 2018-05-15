@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { WebSocketSubject } from 'rxjs/observable/dom/WebSocketSubject';
 import { WebSocketMessageModel } from './models/WebSocketMessageModel';
 
-const WebSocketUri = 'ws://localhost:57603/ws';
+const WebSocketUri = 'ws://localhost:81/ws';
 
 @Component({
   templateUrl: 'websocket.component.html'
@@ -20,13 +20,15 @@ export class WebSocketComponent implements OnInit {
 
     this.socket$
       .subscribe(
-        (message) => this.doSomething(message),
-        (err) => console.error(err),
-        () => console.warn('Completed!')
-      );
+        message => this.binToString(message),
+        err => console.log("There was an error: " + err));
   }
+  binToString(str: string) {
+    var message = "";
+    for (var i = 0; i < str.length; i++) {
+      message += String.fromCharCode(parseInt(str[i], 2));
+    }
 
-  doSomething(message: any): void {
-    console.log(JSON.stringify(message));
+    console.log("Returned as websocket stream: " + message)
   }
 }
